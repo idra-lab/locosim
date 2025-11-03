@@ -1,73 +1,76 @@
 
 [submodule "ros_impedance_controller"]
 	path = ros_impedance_controller
-	url = git@github.com:mfocchi/ros_impedance_controller.git
+	url = https://github.com/idra-lab/ros_impedance_controller.git
 [submodule "robot_control"]
 	path = robot_control
-	url = git@github.com:mfocchi/robot_control.git
+	url = https://github.com/idra-lab/robot_control.git
 [submodule "robot_descriptions/climbingrobot_description"]
 	path = robot_descriptions/climbingrobot_description
-	url = git@github.com:mfocchi/climbingrobot_description.git
+	url = https://github.com/idra-lab/climbingrobot_description.git
 [submodule "robot_descriptions/ur_description"]
 	path = robot_descriptions/ur_description
-	url = git@github.com:mfocchi/ur_description.git
+	url = https://github.com/idra-lab/ur_description.git
 [submodule "robot_descriptions/hyq_description"]
 	path = robot_descriptions/hyq_description
-	url = git@github.com:mfocchi/hyq_description.git
+	url = https://github.com/idra-lab/hyq_description.git
 [submodule "robot_descriptions/jumpleg_description"]
 	path = robot_descriptions/jumpleg_description
-	url = git@github.com:mfocchi/jumpleg_description.git
+	url = https://github.com/idra-lab/jumpleg_description.git
 [submodule "robot_descriptions/solo_description"]
 	path = robot_descriptions/solo_description
-	url = git@github.com:mfocchi/solo_description.git
+	url = https://github.com/idra-lab/solo_description.git
 [submodule "robot_descriptions/solo_fw_description"]
 	path = robot_descriptions/solo_fw_description
-	url = git@github.com:mfocchi/solo_fw_description.git
+	url = https://github.com/idra-lab/solo_fw_description.git
 [submodule "robot_descriptions/go1_description"]
 	path = robot_descriptions/go1_description
-	url = git@github.com:mfocchi/go1_description.git
+	url = https://github.com/idra-lab/go1_description.git
 [submodule "robot_descriptions/aliengo_description"]
 	path = robot_descriptions/aliengo_description
-	url = git@github.com:mfocchi/aliengo_description.git
+	url = https://github.com/idra-lab/aliengo_description.git
 [submodule "robot_hardware_interfaces/base_hardware_interface"]
 	path = robot_hardware_interfaces/base_hardware_interface
-	url = git@github.com:mfocchi/base_hardware_interface.git
+	url = https://github.com/idra-lab/base_hardware_interface.git
 [submodule "robot_hardware_interfaces/aliengo_hardware_interface"]
 	path = robot_hardware_interfaces/aliengo_hardware_interface
-	url = git@github.com:mfocchi/aliengo_hardware_interface.git
+	url = https://github.com/idra-lab/aliengo_hardware_interface.git
 [submodule "robot_descriptions/gripper_description"]
 	path = robot_descriptions/gripper_description
-	url = git@github.com:mfocchi/gripper_description.git
+	url = https://github.com/idra-lab/gripper_description.git
 [submodule "robot_descriptions/myrobot_description"]
 	path = robot_descriptions/myrobot_description
-	url = git@github.com:mfocchi/myrobot_description.git
+	url = https://github.com/idra-lab/myrobot_description.git
 [submodule "robot_descriptions/starbot_description"]
 	path = robot_descriptions/starbot_description
-	url = git@github.com:mfocchi/starbot_description.git
+	url = https://github.com/idra-lab/starbot_description.git
 [submodule "robot_hardware_interfaces/go1_hardware_interface"]
 	path = robot_hardware_interfaces/go1_hardware_interface
-	url = git@github.com:mfocchi/go1_hardware_interface.git
+	url = https://github.com/idra-lab/go1_hardware_interface.git
 [submodule "robot_hardware_interfaces/ur_driver"]
 	path = robot_hardware_interfaces/ur_driver
-	url = git@github.com:mfocchi/universal_robots_ros_driver.git
+	url = https://github.com/idra-lab/universal_robots_ros_driver.git
 [submodule "robot_hardware_interfaces/zed_wrapper"]
 	path = robot_hardware_interfaces/zed_wrapper
-	url = git@github.com:mfocchi/zed_wrapper.git
+	url = https://github.com/idra-lab/zed_wrapper.git
 [submodule "robot_descriptions/tractor_description"]
 	path = robot_descriptions/tractor_description
-	url = git@github.com:mfocchi/tractor_description.git
+	url = https://github.com/idra-lab/tractor_description.git
 [submodule "robot_descriptions/z1_description"]
 	path = robot_descriptions/z1_description
-	url = git@github.com:mfocchi/z1_description.git
+	url = https://github.com/idra-lab/z1_description.git
 [submodule "robot_descriptions/go2_description"]
 	path = robot_descriptions/go2_description
-	url = git@github.com:mfocchi/go2_description.git
+	url = https://github.com/idra-lab/go2_description.git
 [submodule "robot_descriptions/orchard_world"]
 	path = robot_descriptions/orchard_world
-	url = git@github.com:mfocchi/orchard_world.git
+	url = https://github.com/idra-lab/orchard_world.git
 [submodule "robot_descriptions/sensors_description"]
 	path = robot_descriptions/sensors_description
-	url = git@github.com:mfocchi/sensors_description.git
+	url = https://github.com/idra-lab/sensors_description.git
 [submodule "robot_descriptions/invpend_description"]
 	path = robot_descriptions/invpend_description
-	url = git@github.com:mfocchi/invpend_description.git
+	url = https://github.com/idra-lab/invpend_description.git
+[submodule "robot_descriptions/anymal_d_description"]
+	path = robot_descriptions/anymal_d_description
+	url = https://github.com/idra-lab/anymal_d_description.git
