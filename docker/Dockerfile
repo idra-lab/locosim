@@ -14,7 +14,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     locales tzdata curl wget gnupg2 lsb-release ca-certificates \
     software-properties-common git build-essential cmake \
-    python3 python3-pip \
+    python3 python3-pip python3-dev \
+    libatlas-base-dev gfortran libgmp-dev pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8
@@ -23,7 +24,7 @@ RUN locale-gen en_US.UTF-8
 # Install ROS build tools
 # -----------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-rosdep python3-vcstool python3-colcon-common-extensions \
+    python3-rosdep python3-vcstool  \
     && rm -rf /var/lib/apt/lists/*
 
 # -----------------------------
@@ -66,7 +67,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-tf2-ros \
     ros-noetic-tf2-tools \
     ros-noetic-industrial-robot-status-controller \
-    rospack-tools \ 
+    rospack-tools \
     liburdfdom-tools \
     && rm -rf /var/lib/apt/lists/*
 
@@ -79,37 +80,34 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-termcolor \
     python3-tk \
     python3-catkin-pkg \
-    python3-rospkg \   
-    python3-rosdep \ 
+    python3-rospkg \
+    python3-rosdep \
     && rm -rf /var/lib/apt/lists/*
- 
-RUN pip3 install --no-cache-dir \  
-    cvxpy==1.2.0 \
-    shapely \
-    quadprog \
+
+# Install Python wheels / packages (separate RUNs to avoid passing shell text to pip)
+
+# upgrade pip/build tools first so pyproject.toml is parsed correctly
+RUN pip3 install --upgrade pip setuptools wheel
+
+# keep preinstalled numerical wheels to speed builds and avoid unnecessary compilation
+RUN pip3 install --no-cache-dir numpy scipy wheel
+
+# then install cvxpy and the other packages
+RUN pip3 install --no-cache-dir cvxpy==1.2.0 shapely quadprog
 
 # -----------------------------
 # robotpkg (Focal → py38)
 # -----------------------------
-RUN set -eux; \
-    install -d -m 0755 /etc/apt/keyrings; \
-    curl -fsSL http://robotpkg.openrobots.org/packages/debian/robotpkg.key \
-      | gpg --dearmor -o /etc/apt/keyrings/robotpkg-archive-keyring.gpg; \
-    chmod 0644 /etc/apt/keyrings/robotpkg-archive-keyring.gpg; \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg-archive-keyring.gpg] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -sc) robotpkg"      >> /etc/apt/sources.list.d/robotpkg.list; \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/robotpkg-archive-keyring.gpg] http://robotpkg.openrobots.org/wip/packages/debian/pub $(lsb_release -sc) robotpkg"  >> /etc/apt/sources.list.d/robotpkg.list; 
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    robotpkg-py38-eigenpy \
-    robotpkg-py38-pinocchio \
-    robotpkg-py38-quadprog \
+    ros-noetic-eigenpy \
+    ros-noetic-pinocchio \
     && rm -rf /var/lib/apt/lists/*
 
 # -----------------------------
 # Utilities and GUI dependencies
 # -----------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gedit gitg git-cola  iputils-ping  net-tools \
+    gedit gitg git-cola iputils-ping net-tools \
     libxext6 libxrender1 libxtst6 libxi6 libfreetype6 fonts-dejavu \
     libgl1-mesa-glx libgtk-3-0 \
     && rm -rf /var/lib/apt/lists/*
@@ -138,10 +136,8 @@ RUN echo '#!/bin/bash' >> /etc/bash.bashrc && \
     echo 'source /opt/ros/noetic/setup.bash' >> /etc/bash.bashrc && \
     echo '[ -f /root/ros_ws/install/setup.bash ] && source /root/ros_ws/install/setup.bash' >> /etc/bash.bashrc && \
     echo 'export LOCOSIM_DIR=/root/ros_ws/src/locosim' >> /etc/bash.bashrc && \
-    echo 'export PATH=/opt/openrobots/bin:$PATH' >> /etc/bash.bashrc && \
-    echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> /etc/bash.bashrc && \    
-    echo 'export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:$LOCOSIM_DIR/robot_control:$PYTHONPATH' >> /etc/bash.bashrc && \
-    echo 'export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/opt/openrobots/share/' >> /etc/bash.bashrc && \
+    echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> /etc/bash.bashrc && \
+    echo 'export PYTHONPATH=/opt/ros/noetic/lib/python3.8/python3.8/site-packages:$LOCOSIM_DIR/robot_control:$PYTHONPATH' >> /etc/bash.bashrc && \
     echo 'alias pycharm='\''/root/pycharm/bin/pycharm.sh'\''' >> /etc/bash.bashrc
 RUN chmod +x /etc/bash.bashrc
 
