@@ -137,7 +137,7 @@ RUN echo '#!/bin/bash' >> /etc/bash.bashrc && \
     echo '[ -f /root/ros_ws/install/setup.bash ] && source /root/ros_ws/install/setup.bash' >> /etc/bash.bashrc && \
     echo 'export LOCOSIM_DIR=/root/ros_ws/src/locosim' >> /etc/bash.bashrc && \
     echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> /etc/bash.bashrc && \
-    echo 'export PYTHONPATH=/opt/ros/noetic/lib/python3.8/python3.8/site-packages:$LOCOSIM_DIR/robot_control:$PYTHONPATH' >> /etc/bash.bashrc && \
+    echo 'export PYTHONPATH=/opt/ros/noetic/lib/python3.8/site-packages:$LOCOSIM_DIR/robot_control:$PYTHONPATH' >> /etc/bash.bashrc && \
     echo 'alias pycharm='\''/root/pycharm/bin/pycharm.sh'\''' >> /etc/bash.bashrc
 RUN chmod +x /etc/bash.bashrc
 

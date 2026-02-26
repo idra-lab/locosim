@@ -74,3 +74,6 @@
 [submodule "robot_descriptions/anymal_d_description"]
 	path = robot_descriptions/anymal_d_description
 	url = https://github.com/idra-lab/anymal_d_description.git
+[submodule "robot_descriptions/limo_description"]
+	path = robot_descriptions/limo_description
+	url = https://github.com/idra-lab/limo_description.git

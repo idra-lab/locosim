@@ -12,11 +12,15 @@ RUN apt-get update && apt-get install -y \
 	ros-noetic-imu-tools 
 
 
-RUN python3 -m pip install --upgrade pip setuptools wheel && \
-    python3 -m pip install --no-cache-dir -f https://storage.googleapis.com/jax-releases/jax_releases.html 'jax[cpu]' && \
-    python3 -m pip install --no-cache-dir optax==0.1.4 && \
-    python3 -m pip install --no-cache-dir onnxruntime torch==2.0.0 flax
- 
+RUN python3 -m pip install --upgrade pip setuptools wheel
+RUN python3 -m pip install --ignore-installed PyYAML
+RUN python3 -m pip install --no-cache-dir -f https://storage.googleapis.com/jax-releases/jax_releases.html 'jax[cpu]'
+RUN python3 -m pip install --no-cache-dir optax==0.1.4
+RUN python3 -m pip install --no-cache-dir onnxruntime
+RUN python3 -m pip install --no-cache-dir torch==2.0.0 --timeout=1000
+RUN python3 -m pip install --no-cache-dir flax
+
+RUN pip3 install line_profiler
 
 
 # DO NOT redefine ENTRYPOINT or CMD
