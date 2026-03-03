@@ -9,8 +9,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 
 RUN apt-get update && apt-get install -y \ 
-	ros-noetic-imu-tools 
-
+	ros-noetic-imu-tools  
+	
 
 RUN python3 -m pip install --upgrade pip setuptools wheel
 RUN python3 -m pip install --ignore-installed PyYAML
@@ -22,6 +22,8 @@ RUN python3 -m pip install --no-cache-dir flax
 
 RUN pip3 install line_profiler
 
+RUN apt-get update && apt-get install -y \
+    ros-noetic--plotjuggler-ros
 
 # DO NOT redefine ENTRYPOINT or CMD
 # They will automatically be inherited from mother-image
