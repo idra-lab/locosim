@@ -80,3 +80,6 @@
 [submodule "robot_hardware_interfaces/climbingrobot_hardware_interface"]
 	path = robot_hardware_interfaces/climbingrobot_hardware_interface
 	url = https://github.com/idra-lab/climbingrobot_hardware_interface.git
+[submodule "robot_hardware_interfaces/go2_hardware_interface"]
+	path = robot_hardware_interfaces/go2_hardware_interface
+	url = git@github.com:idra-lab/go2_hardware_interface.git
