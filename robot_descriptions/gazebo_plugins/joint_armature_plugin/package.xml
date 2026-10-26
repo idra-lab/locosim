@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>joint_armature_plugin</name>
+  <version>0.0.0</version>
+  <description>Reflected rotor inertia (armature) on ODE joints, as PhysX models it</description>
+  <maintainer email="r.bussola@all3.com">rbussola</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>gazebo_ros</build_depend>
+  <build_export_depend>gazebo_ros</build_export_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+</package>
