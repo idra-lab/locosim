@@ -2,19 +2,21 @@
 
 ### UBUNTU VERSIONS:
 
-Locosim is compatible with Ubuntu 18/20. The installation instructions have been generalized accordingly. You need replace four strings (PYTHON_PREFIX, PYTHON_VERSION, PIP_PREFIX, ROS_VERSION) with the appropriate values according to your operating systems as follows:
+Locosim is compatible with Ubuntu 18/20, and with Ubuntu 22 through ROS-O. The installation instructions have been generalized accordingly. You need to replace five strings (PYTHON_PREFIX, PYTHON_VERSION, ROBOTPKG_PYTHON_VERSION, PIP_PREFIX, ROS_VERSION) with the appropriate values according to your operating systems as follows:
 
-| Ubuntu 18:                   | **Ubuntu 20**:               |
-| ---------------------------- | ---------------------------- |
-| PYTHON_PREFIX = python3      | PYTHON_PREFIX = python3      |
-| PYTHON_VERSION = 3.5         | PYTHON_VERSION = 3.8         |
-| ROBOTPKG_PYTHON_VERSION=py35 | ROBOTPKG_PYTHON_VERSION=py38 |
-| PIP_PREFIX = pip3            | PIP_PREFIX = pip3            |
-| ROS_VERSION = bionic         | ROS_VERSION = noetic         |
+| Ubuntu 18:                   | **Ubuntu 20**:               | **Ubuntu 22 (ROS-O)**:        |
+| ---------------------------- | ---------------------------- | ----------------------------- |
+| PYTHON_PREFIX = python3      | PYTHON_PREFIX = python3      | PYTHON_PREFIX = python3       |
+| PYTHON_VERSION = 3.5         | PYTHON_VERSION = 3.8         | PYTHON_VERSION = 3.10         |
+| ROBOTPKG_PYTHON_VERSION=py35 | ROBOTPKG_PYTHON_VERSION=py38 | ROBOTPKG_PYTHON_VERSION=py310 |
+| PIP_PREFIX = pip3            | PIP_PREFIX = pip3            | PIP_PREFIX = pip3             |
+| ROS_VERSION = bionic         | ROS_VERSION = noetic         | ROS_VERSION = one             |
 
-**NOTE:** ROS is no longer supported (only ROS2 Humble) on Ubuntu 22 hence is not possible to install Locosim on Ubuntu 22.
+**NOTE:** ROS is no longer supported (only ROS2 Humble) on Ubuntu 22, however it is still possible to install Locosim on Ubuntu 22+ using the ROS-O packages (https://github.com/ros-o/ros-o), available as a deb repository at https://ros.packages.techfak.net/. With ROS_VERSION = one, every ros-noetic-* package becomes ros-one-* and the setup file is /opt/ros/one/setup.bash. See the Ubuntu 22 instructions in the [Install ROS](#install-ros) section to set up the repository.
 
 ### Install ROS 
+
+#### Ubuntu 18 / 20 (official ROS packages)
 
 setup your source list:
 
@@ -26,6 +28,37 @@ Set up your keys:
 
 ```
 curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add -
+```
+
+#### Ubuntu 22 (ROS-O packages)
+
+Official ROS 1 packages do not exist for Ubuntu 22, so use the ROS-O repository maintained by Bielefeld University (https://ros.packages.techfak.net) instead of the two steps above. Set up the key and the source list:
+
+```
+sudo apt install curl
+sudo mkdir -p /etc/apt/keyrings
+sudo curl -sSL https://ros.packages.techfak.net/gpg.key -o /etc/apt/keyrings/ros-one-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/ros-one-keyring.gpg] https://ros.packages.techfak.net $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros1.list
+```
+
+Optionally, set up rosdep with the ROS-O package mapping (do **not** install `python3-rosdep2`, which is an outdated version shipped by Ubuntu):
+
+```
+sudo apt update
+sudo apt install python3-rosdep
+sudo rosdep init
+echo "yaml https://ros.packages.techfak.net/ros-one.yaml one" | sudo tee /etc/ros/rosdep/sources.list.d/1-ros-one.list
+rosdep update
+```
+
+Then continue with the steps below, using ROS_VERSION = one (all packages are named `ros-one-*`). If `ros-one-desktop-full` is not available, install `ros-one-desktop`: the Gazebo packages are installed separately in the list below anyway.
+
+#### All versions
+
+update the package lists:
+
+```
+sudo apt-get update
 ```
 
 install ROS main distro:
@@ -107,15 +140,15 @@ sudo apt-get update
 Now you can install Pinocchio and the required libraries:
 
 ```
-sudo apt install robotpkg-PINOCCHIO_PYTHON_VERSION-eigenpy	
+sudo apt install robotpkg-ROBOTPKG_PYTHON_VERSION-eigenpy	
 ```
 
 ```
-sudo apt install robotpkg-PINOCCHIO_PYTHON_VERSION-pinocchio
+sudo apt install robotpkg-ROBOTPKG_PYTHON_VERSION-pinocchio
 ```
 
 ```
-sudo apt-get install robotpkg-PINOCCHIO_PYTHON_VERSION-quadprog  
+sudo apt-get install robotpkg-ROBOTPKG_PYTHON_VERSION-quadprog  
 ```
 
 **NOTE:** If you have issues in installing robotpkg libraries you can try to install them through ROS as:
@@ -190,7 +223,7 @@ You can check which parameters have to be tuned looking to the following [wiki](
 gedit  ~/.bashrc
 ```
 
-copy the following lines (at the end of the .bashrc), remember to replace the string PYTHON_VERSION with the appropriate version name as explained in [software versions](#software-versions) section:
+copy the following lines (at the end of the .bashrc), remember to replace the string PYTHON_VERSION with the appropriate version name as explained in [Ubuntu versions](#ubuntu-versions) section:
 
 ```
 source /opt/ros/ROS_VERSION/setup.bash

@@ -48,8 +48,7 @@ mkdir -p ~/locosim/ros_ws/src
 Then navigate to it and clone the locosim repository with:
 ```bash
 cd ~/locosim/ros_ws/src
-git clone https://github.com/idra-lab/locosim.git
-git submodule update --init 
+git clone https://github.com/idra-lab/locosim.git -b fdr 
 ```
 
 **NOTE:**  when you clone the code, be sure to have a stable and fast connection. Before continuing, be sure you properly checked out **all** the submodules without any error.

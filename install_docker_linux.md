@@ -17,7 +17,7 @@ $./install_docker.sh
 
 ```
 $ cd ~/trento_lab_home/ros_ws/src
-$ git clone https://github.com/idra-lab/locosim.git --recursive
+$ git clone https://github.com/idra-lab/locosim.git -b fdr 
 ```
 
 **NOTE:**  when you clone the code, be sure to have a stable and fast connection. Before continuing, be sure you properly checked out **all** the submodules without any error.
