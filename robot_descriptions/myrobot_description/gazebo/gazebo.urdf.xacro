@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:arg name="task_period" default="0.004" />
+<xacro:arg name="robot_name" default="myrobot" />
+
+	<gazebo>
+		<plugin name="gazebo_ros_controller_manager" filename="libgazebo_ros_control.so">
+			<robotNamespace>/$(arg robot_name)</robotNamespace>
+			<robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+			<legacyModeNS>true</legacyModeNS>
+                        <controlPeriod>$(arg task_period)</controlPeriod>
+		</plugin>
+
+		<plugin filename="libgazebo_ros_p3d.so" name="gazebo_ros_p3d">
+                        <robotNamespace>/$(arg robot_name)</robotNamespace>
+                        <bodyName>base_link</bodyName>
+			<topicName>ground_truth</topicName>
+			<frameName>world</frameName>
+			<xyzOffsets>0 0 0</xyzOffsets>
+			<rpyOffsets>0 0 0</rpyOffsets>
+			<gaussianNoise>0</gaussianNoise>
+			<alwaysOn>true</alwaysOn>
+                        <updateRate>${1/ $(arg task_period)}</updateRate>
+		</plugin>
+	</gazebo>
+
+</robot>
+

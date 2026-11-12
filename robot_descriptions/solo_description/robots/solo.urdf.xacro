@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<robot name="solo" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:property name="color_name" value="grey" />
+    <xacro:property name="color" value="0.8 0.8 0.8" />
+    <xacro:property name="opacity" value="1.0" />
+
+
+    <!--- new_gazebo_version should be false by default because pinocchio needs it!-->
+    <xacro:arg name="robot_name" default="solo"/> 
+    <xacro:arg name="angle_deg" default="0.0"/> 
+
+
+    <xacro:include filename="$(find solo_description)/gazebo/gazebo.urdf.xacro">
+        <xacro:arg name="task_period" value="$(arg task_period)"/>
+	<xacro:arg name="robot_name" value="$(arg robot_name)"/>
+    </xacro:include>
+
+
+
+    <link name="base_link" />
+    
+    <joint name="floating_base" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="trunk"/>
+    </joint>
+
+
+
+    <link name="trunk">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="1.16115091"/>
+            <!-- The base is extremely symmetrical. -->
+            <inertia ixx="0.00578574"   ixy="0.0"           ixz="0.0"
+                                        iyy="0.01938108"    iyz="0.0"
+                                                            izz="0.02476124"/>
+        </inertial>
+        
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://solo_description/meshes/stl/with_foot/solo_body.stl"/>
+            </geometry>
+                <material name="${color_name}">
+                <color rgba="${color} ${opacity}"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://solo_description/meshes/stl/with_foot/solo_body.stl"/>
+            </geometry>
+            <material name="${color_name}">
+                <color rgba="${color} ${opacity}"/>
+            </material>
+        </collision>
+        <!-- Bullet specific paramters -->
+        <contact>
+            <lateral_friction value="1.0"/>
+            <restitution value="0.5"/>
+        </contact>
+    </link>
+
+
+    <!-- Include the legs -->
+    <xacro:include filename="$(find solo_description)/urdfs/leg.xacro"/>
+
+
+
+    <!-- LEFT FRONT LEG -->
+    <xacro:leg
+    prefix="lf"
+    is_front="true"
+    is_right="false"
+    has_side_motion="true"
+    color_name="${color_name}"
+    color="${color}"
+    opacity="${opacity}"
+    robot_name="$(arg robot_name)"/>
+
+    <!-- RIGHT FRONT LEG -->
+    <xacro:leg
+    prefix="rf"
+    is_front="true"
+    is_right="true"
+    has_side_motion="true"
+    color_name="${color_name}"
+    color="${color}"
+    opacity="${opacity}"    
+    robot_name="$(arg robot_name)"/>
+    
+
+    <!-- LEFT HIND LEG -->
+    <xacro:leg
+    prefix="lh"
+    is_front="false"
+    is_right="false"
+    has_side_motion="true"
+    color_name="${color_name}"
+    color="${color}"
+    opacity="${opacity}"
+    robot_name="$(arg robot_name)"/>
+
+    <!-- RIGHT HIND LEG -->
+    <xacro:leg
+    prefix="rh"
+    is_front="false"
+    is_right="true"
+    has_side_motion="true"
+    color_name="${color_name}"
+    color="${color}"
+    opacity="${opacity}"
+    robot_name="$(arg robot_name)"/>
+    
+</robot>

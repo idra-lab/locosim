@@ -1,0 +1,4 @@
+# Publish all joint states need to install ros-kinetic-joint-state-controller-----------------------------------
+joint_state_publisher:
+  type: joint_state_controller/JointStateController
+  publish_rate: 500

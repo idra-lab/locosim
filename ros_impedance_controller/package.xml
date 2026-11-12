@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_impedance_controller</name>
+  <version>0.0.0</version>
+  <description>ROS impedance controller for ros_control</description>
+
+  <maintainer email="graiola@todo.todo">graiola</maintainer>
+  <license>TODO</license>
+
+  <!-- Build tool -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Runtime + Build dependencies actually used in the code -->
+  <depend>roscpp</depend>
+  <depend>controller_interface</depend>
+  <depend>hardware_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <!-- Messages + Services -->
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <!-- Export controller plugin -->
+  <export>
+    <controller_interface plugin="${prefix}/controller_plugin.xml"/>
+  </export>
+
+</package>

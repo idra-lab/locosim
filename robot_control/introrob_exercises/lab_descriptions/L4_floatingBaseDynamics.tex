@@ -1,0 +1,88 @@
+
+\documentclass{report}   
+
+\usepackage{graphicx}
+\usepackage[labelformat=empty]{caption}
+\usepackage{subcaption}
+
+\usepackage{multirow}
+\usepackage{graphics,graphicx} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assume new font selection scheme installed
+\usepackage{times} % assumes new font selection scheme installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amsfonts}
+%\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{url}
+
+\newcommand{\Rnum}{\mathbb{R}} % Symbol fo the real numbers set
+\newcommand{\mat}[1]{\ensuremath{\begin{bmatrix}#1\end{bmatrix}}}	% matrix
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+
+\begin{document}
+
+
+\section*{LAB 3: Centroidal floating base  dynamics}
+
+This lab is to acquire confidence to some invariant properties of floating base dynamics. 
+The base frame B of a floating base robot is usually placed at the robot waist/trunk because this choice induces a  branch sparsity of the Jacobians. 
+However, by defining a different parametrization for the floating base, it is possible to obtain a \textit{block diagonal} joint space inertia matrix.  This is achieved by defining a variable changes for the state of the system using the Center of Mass velocity $\dot{x}_{com}$ and the \textit{average} angular velocity $\bar{\omega}$.  It can be shown that the mechanical power is invariant with respect to the change of coordinate frames used to represent the floating base. 
+
+\quad
+
+\noindent
+1) \textit{Center of mass computation:}
+Compute the Center of Mass of the system performing a weighted average of the Center of Masses of all the links. 
+
+\quad
+
+\noindent
+2) \textit{Kinetic energy:}
+Compute the kinetic energy of the system in two different ways: one by the generalized velocities and system mass matrix, another summing up the contributions from each joint. Show that the result is the same. 
+
+\quad
+
+\noindent
+3) \textit{Centroidal coordinates transform:} 
+Build the transformation matrix ${}_GT_B$ to change coordinates from base to CoM frame.
+
+
+\begin{align}
+{}_GT_B  = \mat{    {}_GX_B  & I_G^{-1} {}_GX_B^{*} F_B  \\ 0_{n \times 6} &   I_{n \times n} }
+\end{align}
+
+where: 
+
+\begin{align}
+ {}_GX_B = \mat{ I_{n \times n}  & -[x_{b, com}]_{\times} \\ 0_{3 \times 3} & 	 I_{3 \times 3}}
+ 	\label{fig:}
+\end{align}
+
+\quad
+
+\noindent
+4) \textit{Block-diagonal joint space inertia matrix:}
+Show the joint space inertia  matrix is decoupled if you apply coordinate transform represented by  ${}_GT_B$:
+
+\begin{align}
+M_G = ({}_GT_B)^{-T} M_B ({}_GT_B)^{-1}
+\label{fig:}
+\end{align}
+
+\quad
+
+\noindent
+5) \textit{Joint gravity vector nullifies in com coordinates:} check that the following result is true.
+\begin{align}
+G_G = -M_G \mat{g_w \\ 0_{n+3}} = \mat{0 \\0\\ -mg  \\ 0_{3x1} \\0_{nx1} }
+\label{fig:}
+\end{align}
+
+%\begin{align}
+%G_G =  ({}_GT_B)^{-T} G_B
+%\label{fig:}
+%\end{align}
+
+\end{document}

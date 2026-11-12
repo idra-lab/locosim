@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<model name="sphere_05">
+	<static>true</static>
+		<link name="link">
+
+		<collision name="collision">
+			<geometry>
+				<sphere>
+					<radius>0.5</radius>
+				</sphere>
+			</geometry>
+		</collision>
+
+		<visual name="visual">
+			<geometry>
+				<sphere>
+					<radius>0.5</radius>
+				</sphere>
+			</geometry>
+		</visual>
+	</link>
+</model>
+
+</sdf>
+

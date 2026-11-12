@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<launch>
+
+<arg name="serial_no" default=""/>
+<arg name="json_file_path" default=""/>
+<arg name="manager" default="realsense_camera_manager"/>
+<arg name="bond" default="false" />
+<arg name="respawn" default="$(arg bond)" />
+<arg name="launch_robot_state_publisher" default="true" />
+
+
+<group if = "$(arg launch_robot_state_publisher)">
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find sensors_description)/urdfs/sensors/standalone_realsense.urdf.xacro' name:=realsense"/>
+	<node pkg="robot_state_publisher" type="state_publisher" name="realsense_state_publisher"/>
+</group>
+
+
+<include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
+	<arg name="serial_no"			value="$(arg serial_no)"/>
+	<arg name="manager"			value="$(arg manager)"/>
+	<arg name="json_file_path"		value="$(arg json_file_path)"/>
+	<arg name="depth_width"			value="640"/>
+	<arg name="depth_height"		value="480"/>
+	<arg name="depth_fps"			value="90"/>
+	<arg name="color_width"			value="640"/>
+	<arg name="color_height"		value="480"/>
+	<arg name="color_fps"			value="60"/>
+	<arg name="enable_depth"		value="true"/>
+	<arg name="enable_color"		value="false"/>
+	<arg name="enable_infra1"		value="false"/>
+	<arg name="enable_infra2"		value="false"/>
+	<arg name="enable_fisheye"		value="false"/>
+	<arg name="enable_imu"			value="false"/>
+	<arg name="enable_pointcloud"		value="false"/>
+	<arg name="enable_sync"			value="false"/>
+	<arg name="spatial_filter"    		default="false"/>
+	<arg name="spatial_alpha"     		default="0.6"/> <!-- 0.45 -->
+	<arg name="spatial_delta"     		default="8"/>
+	<arg name="spatial_iterations"		default="5"/>
+	<arg name="temporal_filter"   		default="true"/>
+	<arg name="temporal_alpha"    		default="0.4"/>
+	<arg name="temporal_delta"    		default="20"/>
+	<arg name="temporal_persistence"	default="3"/>
+	<arg name="holes_filter"		default="false"/>
+	<arg name="holes_filling_mode"		default="1"/>
+	<arg name="decimation_filter"		default="false"/>
+	<arg name="dec_downsample_scale"	default="2"/>
+	<arg name="base_frame_id"		default="front/camera_link"/>
+	<arg name="depth_frame_id"		default="front/camera_depth_frame"/>
+	<arg name="depth_optical_frame_id"	default="front/camera_depth_optical_frame"/>
+</include>
+
+<node pkg="nodelet" type="nodelet" name="points_xyz_sw_registered" args="load depth_image_proc/point_cloud_xyz $(arg manager) $(arg bond)" respawn="$(arg respawn)">
+	<remap from="camera_info"	to="depth/camera_info" />
+	<remap from="image_rect"	to="depth/image_rect_raw" />
+	<remap from="points"		to="depth/points" />
+</node>
+
+</launch>

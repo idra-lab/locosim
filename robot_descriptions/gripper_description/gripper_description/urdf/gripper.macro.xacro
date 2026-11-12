@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+
+
+	
+<xacro:macro name="gripper" params="transmission_hw_interface gripper_active grasp_plugin">
+
+	  <xacro:include filename="$(find gripper_description)/urdf/finger.xacro"/>
+	  <xacro:property name="PI" value="3.1415926535897931"/>
+	  <xacro:property name="cos_PI_3" value="0.5"/>
+	  <xacro:property name="sin_PI_3" value="0.866"/>
+
+
+	  <link name="gripper_base_down">
+	    <inertial>
+	      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+	      <mass value="1.0" />
+	      <inertia  ixx="0.01" ixy="0.0"  ixz="0.0"  iyy="0.01"  iyz="0.0"  izz="0.01" />
+	    </inertial>
+	    <visual>
+	      <origin xyz="0 0 0" rpy="${-PI/2} 0 0"/>
+	   	<geometry>
+		    <mesh filename="package://gripper_description/meshes/gripper_base_down.stl" scale="0.001 0.001 0.001"/>
+		</geometry>
+	    </visual>
+	    <collision>
+	      <origin xyz="0 0 0" rpy="${-PI/2} 0 0"/>
+	    <geometry>
+		    <mesh filename="package://gripper_description/meshes/gripper_base_down.stl" scale="0.001 0.001 0.001"/>
+		</geometry>
+	    </collision>
+	  </link>
+
+
+
+	  <link name="gripper_base">    
+	    <visual>
+	      <origin xyz="0.2275 0 0 " rpy="${-PI/2} 0 0"/>
+	   	<geometry>
+		    <mesh filename="package://gripper_description/meshes/gripper_base_up.stl" scale="0.001 0.001 0.001"/>
+		</geometry>
+	    </visual>
+	    <collision>
+	      <origin xyz="0.2275 0 0" rpy="${-PI/2} 0 0"/>
+	    <geometry>
+		    <mesh filename="package://gripper_description/meshes/gripper_base_up.stl" scale="0.001 0.001 0.001"/>
+		</geometry>
+	    </collision>
+	  </link>
+
+
+	<joint name="flange_fixed_joint" type="fixed">
+			<origin xyz="0 0 0.06" rpy="0 0 0"/>
+			<parent link="gripper_base"/>
+			<child  link="gripper_base_down"/>
+	</joint>
+
+
+	<joint name="fixed_ee_gripper" type="fixed">
+			<origin xyz="0 0 0.12" rpy="0 0 0"/>
+			<parent link="gripper_base"/>
+			<child  link="tool0"/>
+	</joint>
+	<link name="tool0"/>
+
+
+	<xacro:finger
+		name="hand_1"
+		parent="gripper_base_down"
+		transmission_hw_interface="${transmission_hw_interface}"
+		gripper_active="${gripper_active}">
+		 <origin xyz="0.0  -0.03 0.05" rpy="${-PI/2} 0 0"/>
+	</xacro:finger>
+
+	<xacro:finger
+		name="hand_2"
+		parent="gripper_base_down"
+		transmission_hw_interface="${transmission_hw_interface}"
+		gripper_active="${gripper_active}">
+		 <origin xyz="${0.03*sin_PI_3} ${0.03*cos_PI_3} 0.05" rpy="${-PI/2} 0 ${2*PI/3}"/>
+	</xacro:finger>
+
+
+	<xacro:finger
+		name="hand_3"
+		parent="gripper_base_down"
+		transmission_hw_interface="${transmission_hw_interface}"
+		gripper_active="${gripper_active}">
+		 <origin xyz="${-0.03*sin_PI_3} ${0.03*cos_PI_3} 0.05" rpy="${-PI/2} 0 ${-2*PI/3}"/>
+	</xacro:finger>
+
+	<!-- the plugin for grasping that creates a dynamic link with the object when grasping forces are sent is described here:-->
+	<!-- https://github-wiki-see.page/m/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin-->
+	<xacro:if value="${grasp_plugin}">
+		<gazebo>
+		   <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+			<arm>
+			   <arm_name>ur5</arm_name>
+			   <palm_link> wrist_3_link  </palm_link>
+			   <gripper_link> hand_1_link </gripper_link>
+			   <gripper_link> hand_2_link </gripper_link>
+			   <gripper_link> hand_3_link </gripper_link>
+			</arm>
+		       <forces_angle_tolerance>100</forces_angle_tolerance>
+		       <update_rate>500</update_rate>
+		       <grip_count_threshold>4</grip_count_threshold>
+		       <max_grip_count>20</max_grip_count>
+		       <release_tolerance>0.01</release_tolerance>
+		       <disable_collisions_on_attach>true</disable_collisions_on_attach>
+		       <contact_topic>__default_topic__</contact_topic>
+		    </plugin>
+		</gazebo>
+
+	</xacro:if>
+
+  </xacro:macro>
+</robot>
+

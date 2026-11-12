@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="vision_sensor" default="true" />
+  <arg name="gazebo" default="true" />
+  <arg name="gripper" default="true" doc="starts model with gripper"/>
+  <arg name="soft_gripper" default="false" />
+  <arg name="robotiq_gripper" default="false" />
+	  	  
+  <include file="$(find ur_description)/launch/upload.launch">
+	  <arg name="gripper" value="$(arg gripper)" />
+  	  <arg name="robotiq_gripper" value="$(arg robotiq_gripper)" />
+	  <arg name="soft_gripper" value="$(arg soft_gripper)" />
+	  <arg name="gazebo" value="$(arg gazebo)" />
+	  <arg name="vision_sensor" value="$(arg vision_sensor)" />
+  </include>
+  <arg name="robot_name_space" default="ur5"/>
+
+
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" ns="$(arg robot_name_space)"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" ns="$(arg robot_name_space)"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ur_description)/rviz/conf.rviz" required="true" />
+</launch>

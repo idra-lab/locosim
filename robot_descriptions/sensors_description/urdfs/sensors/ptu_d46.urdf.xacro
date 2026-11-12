@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- Things that are needed only for Gazebo (not the physical robot). These include sensor and controller plugin specifications -->
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/ptu_d46.transmission.xacro"/>
+    
+	<xacro:macro name="d46_stepper_module" params="ptu_name joint_name">
+		<link name="${ptu_name}_${joint_name}_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0"/>
+				<mass value="0.65"/>
+				<inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0.0" ixz="0.0" iyz="0.0"/>
+			</inertial>
+			<visual>
+				<material name="ptu_body_color">
+					<color rgba="0.28 0.28 0.28 1"/>
+				</material>
+				<geometry>
+					<box size="0.045 0.065 0.044"/>
+				</geometry>
+				<origin xyz="0 0.011 0"/>
+			</visual>
+			<visual>
+				<geometry>
+					<box size="0.046 0.044 0.044"/>
+				</geometry>
+				<origin xyz="-0.045 0.0215 0"/>
+			</visual>
+			<visual>
+				<geometry>
+					<cylinder length="0.015" radius="0.005"/>
+				</geometry>
+				<origin xyz="-0.074 0.021 0" rpy="0 1.57 0"/>
+			</visual>
+
+			<collision>
+				<geometry>
+					<box size="0.045 0.065 0.044"/>
+				</geometry>
+				<origin xyz="0 0.011 0"/>
+			</collision>
+			<collision>
+				<geometry>
+					<box size="0.046 0.044 0.044"/>
+				</geometry>
+				<origin xyz="-0.045 0.0215 0"/>
+			</collision>
+			<collision>
+				<geometry>
+					<cylinder length="0.015" radius="0.005"/>
+				</geometry>
+				<origin xyz="-0.074 0.021 0" rpy="0 1.57 0"/>
+			</collision>
+		</link>
+		<gazebo reference="${ptu_name}_${joint_name}_link">
+			<material>Gazebo/Grey</material>
+		</gazebo>
+	</xacro:macro>
+
+
+	<xacro:macro name="ptu_d46" params="name parent *origin">
+		<!-- Joints -->
+		<joint name="${name}_joint" type="fixed">
+			<xacro:insert_block name="origin"/>
+			<parent link="${parent}"/>
+			<child link="${name}_base_link"/>
+		</joint>
+
+		<!-- There's an offset between the origin of the pan joint and the origin of 
+        	 the overall device, which is between the mounting screws on its base. -->
+		<joint name="${name}_base" type="fixed">
+			<origin xyz="0 -0.0127254 0.022" rpy="0 0 0"/>
+			<parent link="${name}_base_link"/>
+			<child link="${name}_pan_link"/>
+		</joint>
+		<!-- The pan joint -->
+		<joint name="${name}_pan" type="revolute">
+			<origin xyz="0 0 0.066" rpy="-${PI/2} 0 0"/>
+			<parent link="${name}_pan_link"/>
+			<child link="${name}_tilt_link"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="${-pan_range}" upper="${pan_range}" effort="${joint_effort}" velocity="${pan_velocity}"/>
+		</joint>
+		<!-- The tilt joint -->
+		<joint name="${name}_tilt" type="revolute">
+			<origin xyz="0 -0.002424 0" rpy="-${PI/2} 0 0"/>
+			<parent link="${name}_tilt_link"/>
+			<child link="${name}_tilted_link"/>
+			<axis xyz="0 1 0"/>
+			<limit lower="${-tilt_down_range}" upper="${tilt_up_range}" effort="${joint_effort}" velocity="${tilt_velocity}"/>
+		</joint>
+
+		<!-- Fixed joint to provide a convenient attachment point for accessories. -->
+		<joint name="${name}_mount" type="fixed">
+			<origin xyz="0 0 -0.039116" rpy="${PI} 0 0"/>
+			<parent link="${name}_tilted_link"/>
+			<child link="${name}_mount_link"/>
+		</joint>
+
+		<!-- Links -->
+		<d46_stepper_module ptu_name="${name}" joint_name="pan" />
+		<d46_stepper_module ptu_name="${name}" joint_name="tilt" />
+		<link name="${name}_base_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0"/>
+				<mass value="0.01"/>
+				<inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0.0" ixz="0.0" iyz="0.0"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</visual>
+			<collision>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</collision>
+		</link>
+		<link name="${name}_tilted_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0"/>
+				<mass value="0.01"/>
+				<inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0.0" ixz="0.0" iyz="0.0"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</visual>
+			<collision>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</collision>
+		</link>
+		<link name="${name}_mount_link">
+			<inertial>
+				<origin xyz="0.0 0.0 0.0"/>
+				<mass value="0.01"/>
+				<inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0.0" ixz="0.0" iyz="0.0"/>
+			</inertial>
+			<visual>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</visual>
+			<collision>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+			</collision>
+		</link>
+		
+		<!-- Extensions -->
+		<xacro:ptu_transmission name="${name}"/>
+	</xacro:macro>
+
+</robot>

@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<launch>
+	<arg name="robot_name" default="go1" />
+	<arg name="rviz" default="true" />
+	<arg name="gui" default="true" />
+	<arg name="rviz_conf" default="$(find ros_impedance_controller)/config/operator_floating.rviz"/>
+	<arg name="world_name" default="solo.world"/>
+	<!-- this is to find the models in ros_impedance_controller"-->
+	<env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find ros_impedance_controller)/worlds/models" />
+	
+	<arg name="real_robot" default="false" />
+	<arg name="go0_conf" default="home"/>
+	<arg name="load_force_sensors" default="false"/>
+
+	<!-- if task_period is smaller than sim max_step_size (in world file) it is clamped to that value!!!!!!-->
+	<arg name="task_period" default="0.001" />
+	<arg name="new_gazebo_version" default="true" />
+
+	<arg name="spawn_x" default="0.0" />
+	<arg name="spawn_y" default="0.0" />
+	<arg name="spawn_z" default="0.3" />
+	<arg name="spawn_R" default="0.0" />
+	<arg name="spawn_P" default="0.0" />
+	<arg name="spawn_Y" default="0.0" />
+
+	<arg name="pid_discrete_implementation" default="false" />
+		
+	<!-- load robot name into param server for urdf generation-->
+	<param name="robot_name" type="str" value="$(arg robot_name)" />
+	<param name="task_period"  value="$(arg task_period)" />
+	<param name="pid_discrete_implementation"  value="$(arg pid_discrete_implementation)" />
+
+	<!-- 1 - load the robot URDF /SRDF into param server (this will have to contain ros_control plugin and transmissions) -->
+	<!-- to set the task_period  you need to regenerate the urdf from hyq description by changing <updateRate> of plugin libgazebo_ros_p3d.so-->   
+	<arg name="find_robot_description" value="$(eval find(robot_name+'_description'))"/>
+	<include file="$(arg find_robot_description)/launch/upload.launch">
+		<arg name="task_period" value="$(arg task_period)" />
+	</include>    
+
+	
+	<!-- 2 Loading  controllers configurations from YAML file to parameter server -->
+	<rosparam file="$(find ros_impedance_controller)/config/joint_state_publisher.yaml" ns="/$(arg robot_name)" command="load"/>
+	<rosparam file="$(arg find_robot_description)/config/ros_impedance_controller.yaml" ns="/$(arg robot_name)" command="load"/>
+
+	<group unless="$(arg real_robot)">	
+
+		<!-- 2 launch gzserver / gzcclient -->
+		<include file="$(find gazebo_ros)/launch/empty_world.launch" >
+			<arg name="world_name" value="$(find ros_impedance_controller)/worlds/$(arg world_name)"/>
+		        <arg name="paused" default="true" />
+		        <arg name="use_sim_time" default="true" />
+		        <arg name="gui" value="$(arg gui)" />
+		        <arg name="headless" default="false" />
+		        <arg name="debug" default="false" />
+		        <arg name="verbose" value="true" />
+		</include>
+	
+	        	<!-- Spawn a robot into Gazebo -->
+	        	<node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model $(arg robot_name) -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z) -R $(arg spawn_R) -P $(arg spawn_P) -Y $(arg spawn_Y)"/>
+
+		<!-- Get robot to 0 position -->
+		<node name="goto0" pkg="$(arg robot_name)_description" type="go0" args="1.0 $(arg go0_conf)" output="screen" />
+	</group>
+
+	<group if="$(arg real_robot)">	
+		<!-- 2 Spawn the hardware interface -->
+		<node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="$(arg robot_name)_ros_control_node" respawn="false" />
+	</group>
+  	
+
+	<!-- 4 Loading the controllers into the controller manager -->
+	<node name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
+		        output="screen" ns="/$(arg robot_name)" args="joint_state_publisher ros_impedance_controller"/>
+
+	<!-- rviz stuff -->
+	<!-- 5- load robot_state_publisher: converts joint states to TF transforms, it is just for rviz, etc -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+		<remap from="/joint_states" to="/$(arg robot_name)/joint_states"/> 
+	</node>
+	<!-- 6 run rviz -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world" if="$(arg rviz)"/>
+</launch>
+

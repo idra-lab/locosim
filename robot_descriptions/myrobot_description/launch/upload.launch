@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<launch>
+	<arg name="task_period" default="0.004"/>
+	<arg name="load_force_sensors" default="false"/>
+
+        <!-- send hyq urdf to param server -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find myrobot_description)/robots/myrobot.urdf.xacro' task_period:=$(arg task_period)"/>
+
+
+        <!-- send hyq semantic description srdf to param server -->
+        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find myrobot_description)/robots/myrobot.srdf.xacro' " />
+
+
+</launch>
+

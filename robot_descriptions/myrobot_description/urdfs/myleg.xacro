@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="solo">
+
+    <!-- Things that are needed only for Gazebo (not the physical robot). These include sensor and controller plugin specifications -->
+    <xacro:include filename="$(find myrobot_description)/urdfs/myleg.transmission.xacro"/>
+    <xacro:include filename="$(find myrobot_description)/urdfs/myleg.gazebo.xacro"/>
+
+
+    <!-- This macro has for purpose to define a leg -->
+    <xacro:macro name="leg" params="name parent robot_name *origin ">
+    
+          
+	<joint name="${name}_shoulder_pan_joint" type="revolute">
+		<parent link="${parent}"/>
+		<child link="${name}_lowerleg"/>
+		<axis xyz="0 0 1"/>
+		<xacro:insert_block name="origin"/>
+		<limit effort="50" velocity="10.0" lower="-3.14" upper="3.14" />
+	</joint>
+	
+
+	<link name="${name}_lowerleg">
+		<inertial>
+			<origin xyz="0.0 0.0 0.0"/>
+			<mass value="2" />
+			<inertia  ixx="0.001" ixy="0.0"  ixz="0.0"  iyy="0.001"  iyz="0.0"  izz="0.001" />
+		</inertial>
+			<visual>
+			<origin xyz="0 0.0 0.0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.1 0.1 0.2"/>
+			</geometry>
+			</visual>
+		<collision>
+			<origin  xyz="0 0.0 0.0 " rpy="0 0 0"/>
+			<geometry>
+				<box size="0.1 0.1 0.2"/>
+			</geometry>
+		</collision>
+	</link>
+
+        <joint name="${name}_foot_fixed" type="fixed">
+            <origin rpy="0 0 0" xyz="0 0 -0.1"/>
+            <parent link="${name}_lowerleg"/>
+            <child link="${name}_foot"/>
+        </joint>
+
+        <link name="${name}_foot">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <sphere radius="0.05"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <sphere radius="0.05"/>
+                </geometry>
+            </collision>
+        </link>
+
+
+
+        <!-- Extensions -->
+        <xacro:leg_transmission name="${name}"/>
+        <xacro:leg_gazebo name="${name}" robot_name="${robot_name}"/>
+    </xacro:macro>
+</robot>

@@ -1,0 +1,33 @@
+﻿ros_impedance_controller:
+  type: ros_impedance_controller/Controller
+  joints:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+    - hand_1_joint
+    - hand_2_joint
+
+  gains:
+    shoulder_pan_joint: {p: 400.0, i: 0.0, d: 26.0}
+    shoulder_lift_joint: {p: 400.0, i: 0.0, d: 26.0}
+    elbow_joint: {p: 400.0, i: 0.0, d: 26.0}
+    wrist_1_joint: {p: 400.0, i: 0.0, d: 26.0}
+    wrist_2_joint: {p: 400.0, i: 0.0, d: 26.0}
+    wrist_3_joint: {p: 400.0, i: 0.0, d: 26.0}
+    hand_1_joint: {p: 10.0, i: 0.0, d: 0.2}
+    hand_2_joint: {p: 10.0, i: 0.0, d: 0.2}
+
+  home:
+    shoulder_pan_joint:  -1.5
+    shoulder_lift_joint:  0.75
+    elbow_joint:   -0.2
+    wrist_1_joint:  -0.2
+    wrist_2_joint:  0.75
+    wrist_3_joint:  -1.5
+    hand_1_joint:  0.0
+    hand_2_joint:  0.0
+
+

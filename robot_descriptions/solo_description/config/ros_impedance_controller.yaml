@@ -1,0 +1,48 @@
+ros_impedance_controller:
+  type: ros_impedance_controller/Controller
+  joints:
+    - lf_haa_joint
+    - lf_hfe_joint
+    - lf_kfe_joint  
+    - lh_haa_joint
+    - lh_hfe_joint
+    - lh_kfe_joint
+    - rf_haa_joint
+    - rf_hfe_joint
+    - rf_kfe_joint
+    - rh_haa_joint
+    - rh_hfe_joint
+    - rh_kfe_joint
+  gains:
+      lf_haa_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lf_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lf_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+
+
+      lh_haa_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lh_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+      lh_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+
+      rf_haa_joint: {p: 5.0, i: 0.0, d: 0.1}
+      rf_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+      rf_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+
+
+      rh_haa_joint: {p: 5.0, i: 0.0, d: 0.1}
+      rh_hfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+      rh_kfe_joint: {p: 5.0, i: 0.0, d: 0.1}
+  home:
+      lf_haa_joint:   0.0
+      lf_hfe_joint:   1.57
+      lf_kfe_joint:  -3.13
+      lh_haa_joint:   0.0
+      lh_hfe_joint:   -1.57
+      lh_kfe_joint:   3.13
+      rf_haa_joint:   0.0
+      rf_hfe_joint:   1.57
+      rf_kfe_joint:  -3.13
+      rh_haa_joint:   0.0
+      rh_hfe_joint:   -1.57
+      rh_kfe_joint:   3.13
+
+

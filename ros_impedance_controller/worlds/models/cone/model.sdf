@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<model name="cone">
+        <static>true</static>
+	<link name="link">
+		<collision name="collision">
+			<geometry>
+		    	    <mesh>
+				<uri>model://cone/meshes/cone.stl</uri>
+				<scale>0.1 0.1 0.1</scale>
+			    </mesh>	   
+			</geometry>
+		</collision>
+			   
+		<visual name="visual">
+			<geometry>
+			    <mesh>
+				<uri>model://cone/meshes/cone.stl</uri>
+				<scale>0.1 0.1 0.1</scale>
+			    </mesh>
+			</geometry>
+		</visual>
+	</link>
+</model>
+</sdf>
+

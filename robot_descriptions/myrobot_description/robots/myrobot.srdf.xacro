@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<robot name="myrobot" xmlns:xacro="http://ros.org/wiki/xacro">
+	
+     <group_state name="home" group="all_legs">
+		    <joint name="floating_base_joint" value="0. 0. 0. 0. 0. 0. 1." />
+                    <joint name="lf_shoulder_pan_joint" value="0.0" />    
+                    <joint name="lh_shoulder_pan_joint" value="0.0" />           
+                    <joint name="rf_shoulder_pan_joint" value="0.0" />
+                    <joint name="rh_shoulder_pan_joint" value="0.0" /> 
+     </group_state>        
+
+</robot>

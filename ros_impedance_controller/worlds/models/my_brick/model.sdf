@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<model name="my_brick">
+
+
+<link name="link">
+
+
+	<inertial>
+		<mass>4.0</mass>
+		<inertia> 
+
+		  <ixx>0.083</ixx>       
+		  <ixy>0.0</ixy>       
+		  <ixz>0.0</ixz>       
+		  <iyy>0.083</iyy>     
+		  <iyz>0.0</iyz>         
+		  <izz>0.083</izz>     
+		</inertia>
+	</inertial>
+
+
+	<collision name="collision">
+	<geometry>
+	    <mesh>
+		<uri>model://my_brick/meshes/X1-Y1-Z2.stl</uri>
+		
+	    </mesh>	   
+	</geometry>
+	</collision>
+   
+	<visual name="visual">
+	<geometry>
+	    <mesh>
+		<uri>model://my_brick/meshes/X1-Y1-Z2.stl</uri>
+		
+	    </mesh>
+	</geometry>
+	</visual>
+	
+	
+	
+	
+	
+</link>
+</model>
+</sdf>
+

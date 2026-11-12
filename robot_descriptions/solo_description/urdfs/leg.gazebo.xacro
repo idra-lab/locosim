@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+        <xacro:macro name="leg_gazebo" params="name robot_name">
+
+                <gazebo reference="${name}_haa_joint">
+                        <provideFeedback>true</provideFeedback>
+                </gazebo>
+                
+
+
+                <gazebo reference="${name}_kfe_joint">
+                        <provideFeedback>true</provideFeedback>
+                </gazebo>
+               
+                <gazebo reference="${name}_hfe_joint">
+                        <provideFeedback>true</provideFeedback>
+                </gazebo>
+                
+
+                <gazebo reference="${name}_upperleg">
+                        <kp>1000000.0</kp>
+                        <kd>100.0</kd>
+                        <mu1>1.5</mu1>
+                        <mu2>1.5</mu2>
+                        <fdir1>1 0 0</fdir1>
+                        <maxVel>1.0</maxVel>
+                        <minDepth>0.00</minDepth>
+                </gazebo>
+                <gazebo reference="${name}_lowerleg">
+                        <kp>1000000.0</kp>
+                        <kd>100.0</kd>
+                        <mu1>1.0</mu1>
+                        <mu2>1.0</mu2>
+                        <maxVel>1.0</maxVel>
+                        <maxContacts>1</maxContacts>
+                        <sensor name="${name}_shin_contact_sensor" type="contact">
+                <always_on>true</always_on>
+                <update_rate>250.0</update_rate>
+                <contact>
+                  <collision>${name}_lowerleg_collision</collision>
+                </contact>
+                <!-- the sensor readings in terms of force torques are expressed in the lowerleg frame
+                because gazebo lumps the fake footframe with the real parent link, the normals are in the world frame-->
+                 <plugin name="${name}_shin_bumper" filename="libgazebo_ros_bumper.so">
+                  <bumperTopicName>/${robot_name}/${name}_shin_bumper</bumperTopicName>
+                </plugin>
+            </sensor>
+                </gazebo>
+
+                <gazebo reference="${name}_foot">
+                        <kp>1000000.0</kp>
+                        <kd>100.0</kd>
+                        <mu1>0.8</mu1>
+                        <mu2>0.8</mu2>
+                        <maxVel>1.0</maxVel>
+                        <maxContacts>1</maxContacts>
+                        <sensor name="${name}_foot_contact_sensor" type="contact">
+                                <always_on>true</always_on>
+                                <update_rate>1000.0</update_rate>
+                                <contact>
+
+                                        <collision>${name}_lowerleg_fixed_joint_lump__${name}_foot_collision_1</collision>
+                                </contact>
+                                <!-- the sensor readings in terms of force torques are expressed in the lowerleg frame
+                                because gazebo lumps the fake footframe with the real parent link, the normals are in the world frame-->
+                                <plugin name="${name}_foot_bumper" filename="libgazebo_ros_bumper.so">
+                                        <bumperTopicName>/${robot_name}/${name}_foot_bumper</bumperTopicName>
+                                        <!--robotNamespace>solo</robotNamespace-->
+                                        <frameName>${name}_foot</frameName>
+                                </plugin>
+                        </sensor>
+                        <material>Gazebo/Black</material>
+                </gazebo>
+        </xacro:macro>
+
+</robot>

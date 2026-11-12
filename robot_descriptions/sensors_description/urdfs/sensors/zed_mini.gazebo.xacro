@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!-- 
+# Copyright (C) 2023
+#
+# author: Federico Rollo
+# mail: rollo.f96@gmail.com
+#
+# This file is part of sensors_description. <https://github.com/graiola/wolf_descriptions>
+#
+# sensors_description is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sensors_description is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License. If not, see http://www.gnu.org/licenses/
+-->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="gazebo_zedm" params="camera_name reference_frame baseline left_depth_optical_frame 
+  right_depth_optical_frame left_color_optical_frame right_color_optical_frame 
+  gyro_frame camera_center odom_frame odom_frame_joint robot_name
+  disable_lumping:=true" >
+
+    <!-- Load parameters to model's main link-->
+    <xacro:property name="deg_to_rad" value="0.01745329251994329577" />
+
+    <!-- LEFT CAMERA WITH DEPTH -->
+    <gazebo reference="${left_color_optical_frame}">
+      <sensor name="left_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>${90*deg_to_rad}</horizontal_fov>
+          <vertical_fov>${60*deg_to_rad}</vertical_fov>
+          <image>
+            <width>1920</width>
+            <height>1080</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>100.0</far>
+          </clip>
+        </camera>
+        <plugin name="depth_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>0.2</baseline>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>${camera_name}/left</cameraName>
+          <robotNamespace>${robot_name}</robotNamespace>
+          <imageTopicName>color/image_raw</imageTopicName>
+          <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>depth/points</pointCloudTopicName>
+          <frameName>${left_depth_optical_frame}</frameName>
+          <pointCloudCutoff>0.3</pointCloudCutoff>
+          <pointCloudCutoffMax>15.0</pointCloudCutoffMax>
+          <!-- TODO modify intrinsic params -->
+          <distortionK1>0.00000001</distortionK1>
+          <distortionK2>0.00000001</distortionK2>
+          <distortionK3>0.00000001</distortionK3>
+          <distortionT1>0.00000001</distortionT1>
+          <distortionT2>0.00000001</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <!-- RIGHT CAMERA -->
+        <gazebo reference="${right_color_optical_frame}">
+      <sensor name="right_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>${90*deg_to_rad}</horizontal_fov>
+          <vertical_fov>${60*deg_to_rad}</vertical_fov>
+          <image>
+            <width>1920</width>
+            <height>1080</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>100.0</far>
+          </clip>
+        </camera>
+        <plugin name="depth_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>0</baseline>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>${camera_name}/right</cameraName>
+          <robotNamespace>${robot_name}</robotNamespace>
+          <imageTopicName>color/image_raw</imageTopicName>
+          <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>depth/points</pointCloudTopicName>
+          <frameName>${right_depth_optical_frame}</frameName>
+          <pointCloudCutoff>0.3</pointCloudCutoff>
+          <pointCloudCutoffMax>15.0</pointCloudCutoffMax>
+          <!-- TODO modify intrinsic params -->
+          <distortionK1>0.00000001</distortionK1>
+          <distortionK2>0.00000001</distortionK2>
+          <distortionK3>0.00000001</distortionK3>
+          <distortionT1>0.00000001</distortionT1>
+          <distortionT2>0.00000001</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <!-- IMU -->
+    <gazebo reference="${gyro_frame}">
+        <gravity>true</gravity>
+        <sensor name="${camera_name}_imu" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>false</visualize>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <robotNamespace>${robot_name}</robotNamespace> 
+                <topicName>${camera_name}/gyro/sample</topicName>
+                <bodyName>${camera_name}_pose_frame</bodyName>
+                <updateRateHZ>100</updateRateHZ>
+                <gaussianNoise>0.000001</gaussianNoise>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <frameName>${camera_center}</frameName>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!-- ODOMETRY -->
+    <gazebo reference="${odom_frame_joint}">
+        <disableFixedJointLumping>${disable_lumping}</disableFixedJointLumping>
+    </gazebo>
+    <gazebo> 
+        <plugin name="${camera_name}_odom" filename="libgazebo_ros_p3d.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>100</updateRate>
+            <robotNamespace>${robot_name}</robotNamespace> 
+            <bodyName>${odom_frame}</bodyName>
+            <topicName>${camera_name}/odom</topicName>
+            <gaussianNoise>0.001</gaussianNoise>
+            <frameName>world</frameName>
+            <xyzOffsets>0 0 0</xyzOffsets>
+            <rpyOffsets>0 0 0</rpyOffsets>
+        </plugin>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

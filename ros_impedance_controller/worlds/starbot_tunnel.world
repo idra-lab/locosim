@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <world name="default">
+  
+    <!-- A gravity force -->
+    <physics type='ode'>
+      <gravity>0 0 -9.81</gravity>
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <!-- max step size has to be a multiple of the desired task rate-->
+      <max_step_size>0.001</max_step_size> 
+      <real_time_factor>1</real_time_factor>
+
+       <!--ode>
+        <solver>
+          <type>quick</type>
+          <iters>1500</iters>
+          <precon_iters>10</precon_iters>
+          <sor>1.4</sor>
+        </solver>
+      </ode-->
+    </physics>
+    
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    
+    <!-- A tunnel -->
+    <include>
+      <name>tunnel</name>
+      <uri>model://tunnel</uri>
+    </include>
+
+  </world>
+</sdf>

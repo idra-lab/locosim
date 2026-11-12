@@ -1,0 +1,265 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:include filename="$(find sensors_description)/urdfs/sensors/multisense_sl.gazebo.xacro"/>
+
+
+<xacro:macro name="multisense_sl" params="parent *origin prefix" >
+
+	<joint name="${parent}_head_root_joint" type="fixed">
+		<xacro:insert_block name="origin"/>
+		<parent link="${parent}"/>
+		<child link="head_root"/>
+	</joint>
+
+	<!-- Multisense joints -->
+	<link name="head_root">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<joint name="head_root_joint" type="fixed">
+		<parent link="head_root"/>
+		<child link="head"/>
+	</joint>
+	<joint name="${prefix}/left_camera_optical_joint" type="continuous">
+		<parent link="${prefix}/left_camera_optical_frame" />
+		<child link="${prefix}/motor" />
+                <origin xyz="0.027155533433 -0.0971753746271 -0.0172099247575" rpy="0.00196935 0.00780759 2.06496" />
+	</joint>
+	<joint name="${prefix}/motor_joint" type="continuous">
+		<parent link="${prefix}/motor" />
+		<child link="${prefix}/spindle" />
+		<axis xyz="0 0 1" />
+	</joint>
+	<joint name="${prefix}/spindle_joint" type="continuous">
+		<parent link="${prefix}/spindle" />
+		<child link="${prefix}/hokuyo_link" />
+                <origin xyz="0.000662488571834 0.00996151566505 -7.18757200957e-6" rpy="-0.00223496 -0.0227575 -1.53777e-12" />
+	</joint>
+	<joint name="${prefix}/head_hokuyo_frame_joint" type="fixed"> 
+		<!--
+		This transform accounts for the fact ROS expects laser data in the x forward,
+		y left, z up frame and the calibraton has the data in x left, y up, z forward.
+		Thus a roll of -90 * a pitch of -90 will make the appropriate transform. Note
+		Roll and pitch are both with respect to the origional x left, y up, z forward frame
+		-->
+		<origin xyz="0 0 0" rpy="-1.57079632679 -1.57079632679 0.0" />
+		<parent link="${prefix}/hokuyo_link" />
+		<child link="${prefix}/head_hokuyo_frame"/>
+	</joint>
+	<!-- Stereo Camera -->
+	<joint name="${prefix}/left_camera_frame_joint" type="fixed">
+		<!-- optical frame collocated with tilting DOF -->
+		<origin xyz="0.0 0.035 -0.002"/>
+		<parent link="head"/>
+		<child link="${prefix}/left_camera_frame"/>
+	</joint>
+	<joint name="${prefix}/left_camera_optical_frame_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="-1.57079632679 0.0 -1.57079632679" />
+		<parent link="${prefix}/left_camera_frame" />
+		<child link="${prefix}/left_camera_optical_frame"/>
+	</joint>
+	<joint name="${prefix}/right_camera_frame_joint" type="fixed">
+		<origin xyz="0.0 -0.035 -0.002"/>
+		<parent link="head"/>
+		<child link="${prefix}/right_camera_frame"/>
+	</joint>
+	<joint name="${prefix}/right_camera_optical_frame_joint" type="fixed">
+		<origin xyz="0 0 0" rpy="-1.5708 0.0 -1.5708" />
+		<parent link="${prefix}/right_camera_frame" />
+		<child link="${prefix}/right_camera_optical_frame"/>
+	</joint>
+	<joint name="${prefix}/center_top_led_frame_joint" type="fixed">
+		<origin xyz="0.01125 0.0 0.0105"/>
+		<parent link="head"/>
+		<child link="${prefix}/center_top_led_frame"/>
+	</joint>
+	<joint name="${prefix}/center_bottom_led_frame_joint" type="fixed">
+		<origin xyz="0.01125 0.0 -0.0155"/>
+		<parent link="head"/>
+		<child link="${prefix}/center_bottom_led_frame"/>
+	</joint>
+	<joint name="${prefix}/left_led_frame_joint" type="fixed">
+		<origin xyz="-0.01443 0.07452 0.050346" rpy="0 -0.15 0.53"/>
+		<parent link="head"/>
+		<child link="${prefix}/left_led_frame"/>
+	</joint>
+	<joint name="${prefix}/right_led_frame_joint" type="fixed">
+		<origin xyz="-0.01443 -0.07452 0.050346" rpy="0 -0.15 -0.53"/>
+		<parent link="head"/>
+		<child link="${prefix}/right_led_frame"/>
+	</joint>
+	<joint name="${prefix}/head_imu_joint" type="fixed">
+		<parent link="head"/>
+		<child link="${prefix}/head_imu_link"/>
+		<!-- putting it at the same z-level as the stereo -->
+		<origin xyz="-0.0475 0.035 0.0" rpy="0 0 0"/>
+	</joint>
+	<joint name="${prefix}/accel_joint" type="fixed">
+		<origin xyz="-.0475 .0302 -.00275" rpy="0 1.5707 0"/>
+		<parent link="head_root"/>
+		<child link="${prefix}/accel"/>
+	</joint>
+	<joint name="${prefix}/mag_joint" type="fixed">
+		<origin xyz="-.0475 .0302 -.00275" rpy="0 1.5707 0"/>
+		<parent link="head_root"/>
+		<child link="${prefix}/mag"/>
+	</joint>
+	<joint name="${prefix}/gyro_joint" type="fixed">
+		<origin xyz="-.0476 .0388 -.00075" rpy="1.5707 3.14159 1.5707 "/>
+		<parent link="head_root"/>
+		<child link="${prefix}/gyro"/>
+	</joint>
+
+	<!-- Multisense links -->
+	<link name="head">
+		<inertial>
+			<origin xyz="-0.075493 3.3383E-05 0.02774" rpy="0 0 0" />
+			<mass value="1.4199" />
+			<inertia iyy="0.0041178" ixy="-1.5797E-06" iyz="-6.8415E-07" ixx="0.0039688" ixz="-0.00089293" izz="0.0035243" />
+		</inertial>
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://multisense_description/meshes/head.dae" />
+			</geometry>
+			<material name="">
+				<color rgba="0.9098 0.44314 0.031373 1" />
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="-0.0503 0 -0.00195" rpy="0 0 0" />
+			<geometry>
+				<box size="0.1311 0.12 0.0591"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="${prefix}/motor">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/spindle">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/hokuyo_link">
+		<inertial>
+			<origin xyz="0.012428 0.0004084 -0.0041835" rpy="0 0 0" />
+			<mass value="0.001" />
+			<inertia iyy="4.2412E-05" ixy="4.9927E-08" iyz="-9.8165E-09" ixx="3.7174E-05" ixz="1.1015E-05" izz="4.167E-05" />
+		</inertial>
+		<visual>
+			<origin xyz="-.03 -.1 0" rpy="-1.9179632679 -1.57079632679 0" />
+			<geometry>
+				<mesh filename="package://multisense_description/meshes/head_camera.dae" />
+			</geometry>
+			<material name="">
+				<color rgba="0.72941 0.35686 0.023529 1" />
+			</material>
+		</visual>
+		<collision>
+			<origin xyz="0.03 0 0.0235" rpy="0 0 0" />
+			<geometry>
+				<cylinder radius="0.024425" length="0.047"/>
+			</geometry>
+		</collision>
+	</link>
+	<link name="${prefix}/head_hokuyo_frame">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/left_camera_frame">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/left_camera_optical_frame">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/right_camera_frame">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/right_camera_optical_frame">
+		<inertial>
+			<mass value="0.001" />
+			<origin xyz="0 0 0" />
+			<inertia ixx="0.001"  ixy="0.0"  ixz="0.0" iyy="0.001"  iyz="0.0" izz="0.001" />
+		</inertial>
+	</link>
+	<link name="${prefix}/center_top_led_frame">
+		<inertial>
+			<mass value="0.001"/>
+			<origin xyz="0 0 0"/>
+			<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+		</inertial>
+	</link>
+	<link name="${prefix}/center_bottom_led_frame">
+		<inertial>
+			<mass value="0.001"/>
+			<origin xyz="0 0 0"/>
+				<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+		</inertial>
+	</link>
+	<link name="${prefix}/left_led_frame">
+		<inertial>
+			<mass value="0.001"/>
+			<origin xyz="0 0 0"/>
+			<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+		</inertial>
+	</link>
+	<link name="${prefix}/right_led_frame">
+		<inertial>
+			<mass value="0.001"/>
+			<origin xyz="0 0 0"/>
+			<inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+		</inertial>
+	</link>
+
+	<!-- IMU Frames, Mag/Accel and Gyro -->
+	<!-- Include transfrom to the left_camera_frame (shift in -.035mm in X and -.002mm in Z) -->
+	<!-- imu link -->
+	<link name="${prefix}/head_imu_link">
+		<inertial>
+			<mass value="1e-5" />
+			<!-- collocate with parent link and remove mass from it -->
+			<origin xyz="-0.122993 0.035033383 0.02774" rpy="0 0 0" />
+			<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+		</inertial>
+		<visual>
+			<origin rpy="0 0 0" xyz="0 0 0"/>
+			<geometry>
+				<box size="0.01 0.01 0.01"/>
+			</geometry>
+		</visual>
+	</link>
+	<link name="${prefix}/accel"/>
+	<link name="${prefix}/mag"/>
+	<link name="${prefix}/gyro"/>
+
+
+	<!-- Gazebo multisense plugin -->
+	<xacro:multisense_sl_sensor prefix="${prefix}"/>
+</xacro:macro>
+</robot>

@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<root xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/asus_xtion.gazebo.xacro" />
+
+	<!-- ===================================== ASUS & PROSILICA ==================================== -->
+	<!-- The xacro macro xacro:asus_xtion_camera contains: asus xtion and prosilica combo -->
+	<xacro:macro name="asus_xtion_camera" params="name parent *origin">
+
+		<!-- Joints -->
+		<joint name="${name}_joint" type="fixed">
+			<xacro:insert_block name="origin"/>
+			<parent link="${parent}"/>
+			<child link="${name}_mount_link"/>
+		</joint>
+		<!-- asus ir sensor physical attachment -->
+		<joint name="${name}_depth_joint" type="fixed">
+			<origin xyz="${asus_xtion_x} ${asus_xtion_depth_y} ${asus_xtion_z}" rpy="0 0 0"/>
+			<parent link="${name}_mount_link"/>
+			<child link="${name}_depth_frame"/>
+		</joint>
+		<!-- asus xtion ir sensor frame -->
+		<joint name="${name}_depth_optical_frame_joint" type="fixed">
+			<origin xyz="${asus_xtion_x} ${asus_xtion_depth_y} ${asus_xtion_z}"
+					rpy="${asus_xtion_roll} ${asus_xtion_pitch} ${asus_xtion_yaw}"/>
+			<parent link="${name}_mount_link"/>
+			<child link="${name}_depth_optical_frame"/>
+		</joint>
+		<!-- asus_xtion rgb sensor physical attachment -->
+		<joint name="${name}_rgb_joint" type="fixed">
+			<origin xyz="${asus_xtion_x} ${asus_xtion_rgb_y} ${asus_xtion_z}" rpy="0 0 0"/>
+			<parent link="${name}_mount_link"/>
+			<child link="${name}_rgb_frame"/>
+		</joint>
+		<!-- asus xtion rgb sensor frame -->
+		<joint name="${name}_rgb_optical_frame_joint" type="fixed">
+			<origin xyz="${asus_xtion_x} ${asus_xtion_rgb_y} ${asus_xtion_z}"	rpy="${asus_xtion_roll} ${asus_xtion_pitch} ${asus_xtion_yaw}"/>
+			<parent link="${name}_mount_link"/>
+			<child link="${name}_rgb_optical_frame"/>
+		</joint>
+
+
+		<!-- Links -->
+		<link name="${name}_mount_link">
+			<inertial>
+				<mass value="0.001"/>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/asus_xtion.dae" scale="1 1 1" />
+				</geometry>
+				<material name="gray">
+					<color rgba="0.5 0.5 0.5 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 ${asus_xtion_z}" rpy="0 0 0" />
+				<geometry>
+					<box size="0.05 .18 0.035" />
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- ir sensor link -->
+		<link name="${name}_depth_frame">
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.0005"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.0005"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- ir optical sensor link -->
+		<link name="${name}_depth_optical_frame"/>
+		
+		<!-- rgb sensor link -->
+		<link name="${name}_rgb_frame" >
+			<inertial>
+				<mass value="0.001" />
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.0005"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.0005"/>
+				</geometry>
+			</collision>
+		</link>
+		
+		<!-- rgb optical sensor link -->
+		<link name="${name}_rgb_optical_frame"/>
+
+	<!-- gazebo extensions -->
+	<xacro:asus_xtion_depth_sensor link_name="${name}_depth_frame" frame_name="${name}_depth_optical_frame" camera_name="${name}"/>
+	<xacro:asus_xtion_rgb_sensor link_name="${name}_rgb_frame" frame_name="${name}_rgb_optical_frame" camera_name="${name}"/>
+
+	</xacro:macro>
+</root>

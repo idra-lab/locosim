@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<physics type="ode">
+
+      <ode>
+ 
+        <constraints>
+          <contact_max_correcting_vel>0.1</contact_max_correcting_vel>
+          <contact_surface_layer>0.0001</contact_surface_layer>
+        </constraints>
+      </ode>
+	<max_contacts>10</max_contacts>
+	</physics>
+
+	<model name="tavolo">
+	    <static>true</static>
+		<link name="link">
+			
+
+
+		     <collision name="base">
+			<pose>0.5 0.4 0.85 0 0 0</pose>
+			<geometry>
+			  <box>
+			    <size>1 0.8 0.04</size>
+			  </box>
+			</geometry>
+		
+
+				<!-- see https://gazebosim.org/tutorials?tut=physics_params&cat=physics-->
+				 <surface>
+				  <bounce>
+				    <restitution_coefficient>0.01</restitution_coefficient>
+				    <threshold>5.0</threshold>
+				  </bounce>
+				  <friction>
+				    <ode>
+				      <mu>1</mu>
+				      <mu2>1</mu2>
+				    </ode>
+				  </friction>
+				  <contact>
+				     <ode>
+					<max_vel>0.1</max_vel>
+					<min_depth>0.001</min_depth>
+				        <kp>1000000.0</kp>
+					<kd>1000.0</kd>
+				      </ode>
+			            </contact>
+				</surface>
+ 			
+
+		     	</collision>
+
+	     			<collision name="box">
+				<pose>0.5 0.08 0.95 0 0 0</pose>
+				<geometry>
+				  <box>
+				    <size>1 0.15 0.15</size>
+				  </box>
+				</geometry>
+
+				 <surface>
+				  <bounce>
+				    <restitution_coefficient>0.01</restitution_coefficient>
+				    <threshold>5.0</threshold>
+				  </bounce>
+				  <friction>
+				    <ode>
+				      <mu>1</mu>
+				      <mu2>1</mu2>
+				    </ode>
+				  </friction>
+				  <contact>
+				     <ode>
+					<max_vel>0.1</max_vel>
+					<min_depth>0.001</min_depth>
+				        <kp>1000000.0</kp>
+					<kd>1000.0</kd>
+				      </ode>
+			            </contact>
+				</surface>
+
+
+			      </collision>
+
+			   <collision name="back">
+				<pose>0.5 -0.02 1.35 1.57 0 0</pose>
+				<geometry>
+				  <box>
+				    <size>1 1.0 0.04</size>
+				  </box>
+				</geometry>
+
+				 <surface>
+				  <bounce>
+				    <restitution_coefficient>0.01</restitution_coefficient>
+				    <threshold>5.0</threshold>
+				  </bounce>
+				  <friction>
+				    <ode>
+				      <mu>1</mu>
+				      <mu2>1</mu2>
+				    </ode>
+				  </friction>
+				  <contact>
+				     <ode>
+					<max_vel>0.1</max_vel>
+					<min_depth>0.001</min_depth>
+				        <kp>1000000.0</kp>
+					<kd>1000.0</kd>
+				      </ode>
+			            </contact>
+				</surface>
+
+			      </collision>
+
+			<visual name="visual">
+				<geometry>
+					<mesh>
+						<uri>model://tavolo/mesh/tavolo.stl</uri>
+                                                <scale>0.001 0.001 0.001</scale>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+	</model>
+</sdf>
+

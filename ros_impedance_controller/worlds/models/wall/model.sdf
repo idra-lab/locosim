@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+
+	<model name="wall">
+	    <static>true</static>
+		<link name="link">
+		       <pose>0.0 0.0 1.0  0 0 0</pose>
+			<visual name="box">
+				<geometry>
+				  <box>
+				    <size> 0.1 2.0 2.0</size>
+				  </box>
+				</geometry>
+			</visual>
+		       <collision name="box">
+			       <geometry>
+				  <box>
+				    <size>0.1 2.0 2.0</size>
+				  </box>
+				</geometry>
+
+				 <surface>
+				  <bounce>
+				    <restitution_coefficient>0.01</restitution_coefficient>
+				    <threshold>5.0</threshold>
+				  </bounce>
+				  <friction>
+				    <ode>
+				      <mu>1</mu>
+				      <mu2>1</mu2>
+				    </ode>
+				  </friction>
+				  <contact>
+				     <ode>
+					<max_vel>0.1</max_vel>
+					<min_depth>0.001</min_depth>
+				        <kp>1000000.0</kp>
+					<kd>1000.0</kd>
+				      </ode>
+			            </contact>
+				</surface>
+
+
+			      </collision>
+
+
+		</link>
+	</model>
+</sdf>
+

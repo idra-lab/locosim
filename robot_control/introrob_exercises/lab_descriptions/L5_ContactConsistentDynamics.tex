@@ -1,0 +1,139 @@
+
+\documentclass{report}   
+
+\usepackage{graphicx}
+\usepackage[labelformat=empty]{caption}
+\usepackage{subcaption}
+
+\usepackage{multirow}
+\usepackage{graphics,graphicx} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assume new font selection scheme installed
+\usepackage{times} % assumes new font selection scheme installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amsfonts}
+%\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{url}
+
+\newcommand{\Rnum}{\mathbb{R}} % Symbol fo the real numbers set
+\newcommand{\mat}[1]{\ensuremath{\begin{bmatrix}#1\end{bmatrix}}}	% matrix
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+
+\begin{document}
+
+
+\section*{LAB 4: Contact consistent (fixed) base dynamics}
+
+
+\quad
+
+\noindent
+1) \textit{Simulation of contact consistent dynamics:}
+Generate a sinusoidal reference for Shoulder Lift  joint (see \textit{ex\_4\_conf.py}) with amplitude 0.6 rad and frequency 1 $Hz$.
+
+\quad
+
+\noindent
+2) \textit{Computation of the Constraint Consistent Dynamics:}
+Compute the constraint consistent accelerations $\ddot{q}_c$ where a point  contact (i.e. 3D) is possible only at the end-effector (\textit{ee\_link} frame). 
+
+\begin{align}
+\ddot{q}_c = M^{-1}[ N_{\bar{M}}(S^T\tau- h ) - J^T\Lambda \dot{J}\dot{q}  ]
+\label{eq:ccdyn}
+\end{align}
+
+Where $N_{\bar{M}}$ is the null-space projector for $J^{T \#}$. What is the best way to compute the term $\dot{J}\dot{q}$? 
+(hint: since $\ddot{x} = J\ddot{q} + \dot{J}\dot{q}$ compute the acceleration at the end-effector while setting $\ddot{q}=0$).
+
+\quad
+
+\noindent
+3) \textit{Update of joint velocities after inelastic impact:}
+After an unelastic impact the end-effector velocity is going instantaneously to zero $\dot{x}_e =0$. 
+An impulse is applied to achieve this, that creates a
+discontinuity in the joint velocities. 
+Compute the new value of joint velocities that are consistent with the constraint $\dot{x}_e =0$ 
+by using the null-space projector $N$ for $J$.
+
+\begin{align}
+\ddot{q}^{+} = N \dot{q}^{-} 
+\end{align}
+
+%Verify that the linear part of the twist at the end-effector equals $J \dot{q}$.
+
+\quad
+
+\noindent
+4) \textit{Simulate the Constraint Consistent Dynamics:}
+Use the pre-implemented PD controller (with gravity compensation) and the logic to deal with the contact. 
+At the contact consider the appropriate projection of the dynamics \eqref{eq:ccdyn} before 
+integrating the accelerations and the velocities (with forward Euler). 
+
+
+\quad
+
+
+\noindent
+5) \textit{Contact forces disappear when projecting the dynamics:}
+Check contact force disappears when after the projection in the null-space of $J^{T \#}$  (i.e. $ N_{\bar{M}}J^Tf = 0$) 
+What happens if you use the Moore-penrose pseudo-inverse to compute the projector?
+Plot also the torques in the null-space of $J^{T \#}$ during the contact, check that they are barely zero 
+ because there is almost no internal joint motion. 
+Compare them with a plot of the joint torques to see they are much bigger.
+The motion during the contact depends mainly only on the null-space projector $N_{\bar{M}}$
+that "cuts-out" the torques that generate contact forces, leaving only the ones that generate internal motions (in this case very small).
+
+\quad
+
+\noindent
+6) \textit{Constraint consistent joint reference:}
+Try to double the amplitude of the reference of Shoulder Lift joint to 1.2 rad.
+Design a reference trajectory that is consistent with the contact (hint: compute $\dot{q}^{d}$ project with $N$ and integrate to get $q^d$).Rember to comment the previous reference generation.
+How the reference of the joint changes? it the robot able to move out from the contact?
+
+\quad
+
+\noindent
+7) \textit{Gauss principle of least effort}:
+Verify that the Gauss principle of least constraint is satisfied (e.g. solve the QP where you minimize the 2-norm distance of the constraint acceleration vector from the unconstraint acceleration one,  under the contact constraint).
+
+\quad
+
+\noindent
+8)  \textit{Change in the contact location}:
+Modify the code in order to allow the contact at a different location (e.g. origin of \textit{wrist\_3\_link} frame).  Verify that the end-effector now penetrates the ground. 
+By activating the \textbf{TF} function in \textit{rviz} you can check the relative location of the frames. 
+
+\quad
+
+\noindent
+9) \textit{Check the shifting law (Optional):}
+The twist at\textit{ ee\_link} is $v_{e}$, twist at origin of \textit{wrist\_3\_joint} is: $v_o$. Since they belong to the same rigid body (wrist\_3\_link) they are linked the "shifting law",  by a time-invariant \textit{motion} transform ${}_{e}X_o \in \Rnum^{6 \times 6}$:
+
+\begin{align}
+  v_{e} = {}_{ee}X_o v_o\\
+  J_{e} \dot{q} = {}_{ee}X_o J_o \dot{q}
+	\label{fig:}
+\end{align}
+
+therefore, also for the Jacobians holds:
+
+\begin{align}
+J_{e}  = {}_{e}X_o J_o
+\label{fig:}
+\end{align}
+
+where: 
+\begin{align}
+{}_{o}X_e  = \mat{ {}_{o}R_e   &  -{}_o R_e [{}_{e}t]_{\times} \\
+					0             &     {}_oR_{e}} 
+\label{fig:}
+\end{align}
+
+$ {}_{e}X_o =  {}_{o}X_e^{-1}$ and ${}_{e}t$ is the relative position of the origin of frame ${o}$ w.r.t. frame $e$ expressed in frame ${e}$.
+
+
+ 
+\end{document}

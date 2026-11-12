@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!-- 
+# Copyright (C) 2023
+#
+# author: Federico Rollo
+# mail: rollo.f96@gmail.com
+#
+# This file is part of sensors_description. <https://github.com/graiola/wolf_descriptions>
+#
+# sensors_description is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# sensors_description is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License. If not, see http://www.gnu.org/licenses/
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find sensors_description)/urdfs/sensors/zed_mini.gazebo.xacro"/>
+
+  <xacro:property name="M_PI"     value="3.1415926535897931" />
+  <xacro:property name="baseline" value="0.06" />
+  <xacro:property name="height" value="0.0265" />
+  <xacro:property name="bottom_slope" value="0.0" /> 
+  <xacro:property name="screw_offset_x" value="0.0" />
+  <xacro:property name="optical_offset_x" value="0.0" />
+  <xacro:property name="deg_to_rad" value="0.01745329251994329577" />
+
+  <!-- ZED MINI --> 
+
+  <xacro:macro name="zed_mini" params="sensor_name parent_link rate *origin robot_name disable_lumping:=true">
+
+    <!-- Camera mounting point (the threaded screw hole in the bottom) -->
+    <link name="${sensor_name}_base_link" />
+    <joint name="${sensor_name}_base_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${sensor_name}_base_link"/>
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <!-- odom frame for odometry -->
+    <link name="${sensor_name}_odom_frame"/>
+    <joint name="${sensor_name}_odom_frame_joint" type="fixed">
+      <parent link="${sensor_name}_base_link"/>
+      <child link="${sensor_name}_odom_frame"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- fake odom frame to disable odom lumping -->
+    <link name="${sensor_name}_fake_odom">
+      <inertial>
+        <mass value="0.001"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <inertia ixx="9.108e-08"
+                  ixy="0"
+                  ixz="0"
+                  iyy="2.51e-08"
+                  iyz="0"
+                  izz="8.931e-08"/>
+      </inertial>
+    </link>
+    <joint name="${sensor_name}_odom_fake_joint" type="fixed">
+      <parent link="${sensor_name}_odom_frame"/>
+      <child link="${sensor_name}_fake_odom"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+    <!-- Camera Center -->
+    <link name="${sensor_name}_camera_center">
+      <visual>
+        <origin xyz="${screw_offset_x} 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://sensors_description/meshes/sensors/zed_mini.stl" />
+        </geometry>
+        <!-- <material name="${model}_mat" /> -->
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://sensors_description/meshes/sensors/zed_mini.stl" />
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.055"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <inertia ixx="9.108e-05"
+                  ixy="0"
+                  ixz="0"
+                  iyy="2.51e-06"
+                  iyz="0"
+                  izz="8.931e-05"/>
+      </inertial>
+    </link>
+    <joint name="${sensor_name}_camera_center_joint" type="fixed">
+      <parent link="${sensor_name}_base_link"/>
+      <child link="${sensor_name}_camera_center"/>
+      <origin xyz="0 0 ${height/2}" rpy="0 ${bottom_slope} 0" />
+    </joint>
+
+    <!-- Left Camera -->
+    <link name="${sensor_name}_l_camera_color_optical_frame" />
+    <joint name="${sensor_name}_left_camera_optical_joint" type="fixed">
+      <parent link="${sensor_name}_camera_center"/>
+      <child link="${sensor_name}_l_camera_color_optical_frame"/>
+      <origin xyz="0 ${baseline/2} 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${sensor_name}_l_camera_depth_optical_frame"/>
+    <joint name="${sensor_name}_left_camera_depth_optical_joint" type="fixed">
+      <origin xyz="${optical_offset_x} 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+      <parent link="${sensor_name}_l_camera_color_optical_frame"/>
+      <child link="${sensor_name}_l_camera_depth_optical_frame"/>
+    </joint>
+
+    <!-- Right Camera -->
+    <link name="${sensor_name}_r_camera_color_optical_frame" />
+    <joint name="${sensor_name}_right_camera_optical_joint" type="fixed">
+      <parent link="${sensor_name}_camera_center"/>
+      <child link="${sensor_name}_r_camera_color_optical_frame"/>
+      <origin xyz="0 -${baseline/2} 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${sensor_name}_r_camera_depth_optical_frame"/>
+    <joint name="${sensor_name}_right_camera_depth_optical_joint" type="fixed">
+      <origin xyz="${optical_offset_x} 0 0" rpy="-${M_PI/2} 0.0 -${M_PI/2}"/>
+      <parent link="${sensor_name}_r_camera_color_optical_frame"/>
+      <child link="${sensor_name}_r_camera_depth_optical_frame"/>
+    </joint>
+
+    
+    <link name="${sensor_name}_gyro_frame"/>
+    <joint name="${sensor_name}_gyro_joint" type="fixed">
+        <parent link="${sensor_name}_camera_center"/>
+        <child link="${sensor_name}_gyro_frame"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+    </joint>
+
+
+    <link name="${sensor_name}_accel_frame"/>
+    <joint name="${sensor_name}_accel_joint" type="fixed">
+        <parent link="${sensor_name}_camera_center"/>
+        <child link="${sensor_name}_accel_frame"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/> 
+    </joint>
+
+
+    <xacro:gazebo_zedm 
+      camera_name="${sensor_name}" reference_frame="${sensor_name}_l_camera_color_optical_frame" baseline="${baseline}" 
+      left_depth_optical_frame="${sensor_name}_l_camera_depth_optical_frame" 
+      right_depth_optical_frame="${sensor_name}_r_camera_depth_optical_frame" 
+      left_color_optical_frame="${sensor_name}_l_camera_color_optical_frame"
+      right_color_optical_frame="${sensor_name}_r_camera_color_optical_frame"
+      gyro_frame="${sensor_name}_gyro_frame" camera_center="${sensor_name}_camera_center"
+      odom_frame="${sensor_name}_odom_frame" odom_frame_joint="${sensor_name}_odom_frame_joint"
+      disable_lumping="true" robot_name="${robot_name}"
+    />
+
+  </xacro:macro>
+
+</robot>

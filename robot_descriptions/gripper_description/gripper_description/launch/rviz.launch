@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<launch>
+
+	<arg name="rviz_conf" default="$(find gripper_description)/rviz/conf.rviz"/>
+	<arg name="soft_gripper" default="false"/>
+	<arg name="robotiq_gripper" default="false"/>
+
+	
+	<!-- send hyq urdf to param server and spawn it -->
+	<include file="$(find gripper_description)/launch/upload.launch">	
+		<arg name="soft_gripper" value="$(arg soft_gripper)" />
+		<arg name="robotiq_gripper" value="$(arg robotiq_gripper)" />
+	</include>
+
+	<node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args="0 0 0 0 0 0   /gripper_base /world  200"/>
+
+   	<!-- joint_state_publisher publish joint states from sliders-->
+        <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+
+	<node name="robot_state_publisher" pkg="robot_state_publisher"
+		type="robot_state_publisher" respawn="true">
+		<param name="publish_frequency" value="200" />
+	</node>
+
+	
+	<!-- run rviz -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world"/>
+
+</launch>
+

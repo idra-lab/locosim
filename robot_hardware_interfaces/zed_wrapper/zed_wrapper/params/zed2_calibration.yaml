@@ -1,0 +1,8 @@
+#Pose of the zed2 root_camera_frame w.r.t. base frame
+camera_args:
+    cam_pos_x: 0  
+    cam_pos_y: 0  
+    cam_pos_z: 0  
+    cam_roll:  0
+    cam_pitch: 0
+    cam_yaw:   0   

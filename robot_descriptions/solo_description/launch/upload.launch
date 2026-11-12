@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<launch>
+        <arg name="sensors" default="true"/>
+        <arg name="task_period" default="0.004"/>
+        <arg name="arm" default="false"/>
+
+        
+        <!-- Load the sensors that measured the internal wrench in the joints -->
+        <arg name="load_force_sensors" default="false"/>
+
+        <!-- send solo urdf to param server -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.urdf.xacro'
+        sensors:=$(arg sensors) load_force_sensors:=$(arg load_force_sensors) task_period:=$(arg task_period)"/>
+
+        <!-- send solo semantic description srdf to param server -->
+        <param name="robot_semantic_description" command="$(find xacro)/xacro --inorder '$(find solo_description)/robots/solo.srdf.xacro'" />
+
+</launch>
+
+

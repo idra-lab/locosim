@@ -1,0 +1,452 @@
+def esempio_script_mr():
+  set_tcp(p[0.0,0.0,0.1,0.0,0.0,0.0])
+  set_safety_mode_transition_hardness(1)
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_input_actions_to_default()
+  set_tool_communication(True, 1000000, 2, 1, 1.5, 3.5)
+  set_tool_output_mode(0)
+  set_tool_digital_output_mode(0, 1)
+  set_tool_digital_output_mode(1, 1)
+  set_tool_voltage(24)
+  set_gravity([-1.2026031567627009E-15, 2.2091461598609163E-31, -9.82])
+  set_target_payload(2.000000, [0.000000, 0.000000, 0.000000], [0.004887, 0.004887, 0.004887, 0.000000, 0.000000, 0.000000])
+
+  ON_CONN_SHIFT_BOOL = 64
+  ON_CONN_SHIFT_INT = 24
+  ON_CONN_SHIFT_FLOAT = 24
+  ON_CONN_REG_SUM_BOOL = 6
+  ON_CONN_REG_SUM_INT = 4
+  ON_CONN_REG_SUM_FLOAT = 3
+  ON_TOOL_SHIFT_BOOL = 64
+  ON_TOOL_SHIFT_INT = 25
+  ON_TOOL_SHIFT_FLOAT = 24
+  ON_TOOL_SHIFT_BOOL_ARR = [64, 70, 70]
+  ON_TOOL_SHIFT_INT_ARR = [25, 28, 28]
+  ON_TOOL_SHIFT_FLOAT_ARR = [24, 27, 27]
+  ON_TOOL_REG_SUM_BOOL = 6
+  ON_TOOL_REG_SUM_INT = 3
+  ON_TOOL_REG_SUM_FLOAT = 3
+  ON_REGISTERS_SPEEDL_FLOAT = 0
+  ON_DI_PRIMARY = 1
+  ON_DI_SECONDARY = 2
+  ON_DI_DUAL = 3
+  on_conn_ip = "localhost"
+  on_tool_ip = "localhost"
+  on_device_socket_port = 51234
+  on_tool_xmlrpc = rpc_factory("xmlrpc", "http://localhost:41414")
+  on_isMetric = True
+  on_devices = 1
+  on_gripper = [False, False, False]
+  tfg_index = 0
+  on_gripper[tfg_index] = True
+
+  #======    OnRobot Globals    ======#
+  ON_ZEROFRAME=p[0.0,0.0,0.0,0.0,0.0,0.0]
+  global on_return=0
+
+  ON_INIT_WATCHDOG_HZ=5
+  ON_INIT_TIMEOUT=500
+  on_robot_TCP_offset=ON_ZEROFRAME
+  on_tcp_offset_actual=ON_ZEROFRAME
+  on_cog_actual=ON_ZEROFRAME
+  on_mass_actual=0.0
+  #======    End of OnRobot Globals    ======#
+
+  #======    OnRobot TFG Globals    ======#
+  TFG_DEVICE_ID_TFG15=112
+  tfg_Diameter_arr=[0,0,0]
+  tfg_device_id_arr=[0,0,0]
+  tfg_product_code_arr=[0,0,0]
+  tfg_Status_arr=[0,0,0]
+  tfg_Grip_detected_arr=[False,False,False]
+  tfg_Force_Grip_detected_arr=[False,False,False]
+  tfg_Busy_arr=[False,False,False]
+  tfg_Grip_guard_arr=[False,False,False]
+  #======    End of OnRobot TFG Globals    ======#
+
+  #======    OnRobot Interface Messages    ======#
+  on_devices_primary_log="Dispositivi OnRobot"
+  on_xmlrpc_start_ip="Connessione in corso al server OnRobot XML-RPC:"
+  on_rtde_feed_error_textmsg_title="OnRobot - RTDE errore:"
+  on_rtde_feed_open_error_textmsg="Apertura Socket 'rtdeFeed' non riuscita."
+  on_rtde_feed_error_title="OnRobot - RTDE errore"
+  on_rtde_feed_count_error="Rilevata impostazione offset RTDE non valida. Controllare gli offset RTDE nella pagina Configurazione di OnRobot nella scheda Installazione.<br>Il programma è stato arrestato fermato."
+  on_rtde_feed_open_error="Connessione con i dispositivi in corso.<br>Verificare che i dispositivi OnRobot funzionino, quindi controllare lo stato nella pagina Configurazione OnRobot, nella scheda Installazione."
+  #======    End of OnRobot Interface Messages    ======#
+
+  #======    OnRobot Interface    ======#
+  on_rtde_feed_opened=False
+  on_conn_rtde_feed_name="rtdeFeedConn"
+  on_tool_rtde_feed_name="rtdeFeedTool"
+  def on_rtde_feed_close(rtdeFeedName):
+    socket_close(rtdeFeedName)
+    on_rtde_feed_opened=False
+  end 
+  def on_rtde_feed_open(deviceIP,rtdeFeedName,regStart,regSum,regSpeedl):
+    on_rtde_feed_close(rtdeFeedName)
+    if((regStart[0]+regSum[0])>128)or((regStart[1]+regSum[1])>48)or((regStart[2]+regSum[2])>48):
+      popup(on_rtde_feed_count_error,title=on_rtde_feed_error_title,error=True,blocking=False)
+      textmsg(str_cat("RegStart: ",regStart),str_cat("  -  RegSum: ",regSum))
+      halt
+    end
+    on_rtde_feed_opened=socket_open(deviceIP,on_device_socket_port,rtdeFeedName)
+    if not on_rtde_feed_opened:
+        on_rtde_feed_opened=socket_open(deviceIP,on_device_socket_port,rtdeFeedName)
+    end
+    if not on_rtde_feed_opened:
+        textmsg(on_rtde_feed_error_textmsg_title,on_rtde_feed_open_error_textmsg)
+        popup(on_rtde_feed_open_error,title=on_rtde_feed_error_title,error=True,blocking=False)
+        halt
+    end
+    socket_send_int(regStart[0],rtdeFeedName)
+    socket_send_int(regSum[0],rtdeFeedName)
+    socket_send_int(regStart[1],rtdeFeedName)
+    socket_send_int(regSum[1],rtdeFeedName)
+    socket_send_int(regStart[2],rtdeFeedName)
+    socket_send_int(regSum[2],rtdeFeedName)
+    socket_send_int(regSpeedl,rtdeFeedName)
+    socket_send_int(on_devices,rtdeFeedName)
+  end
+  def on_set_rtde_watchdog(updateHz=ON_INIT_WATCHDOG_HZ):
+    local effect="stop"
+    if(updateHz<1):
+        effect="ignore"
+    end
+    watchdog_conn_reg_str=str_cat("input_int_register_",ON_CONN_SHIFT_INT)
+    rtde_set_watchdog(watchdog_conn_reg_str,updateHz,effect)
+  end
+  #======    End of OnRobot Interface    ======#
+
+  #======    OnRobot TFG Interface    ======#
+  tfg_dataRead_running=False
+  def tfg_dataRead_RTDE(tool_index):
+      local reg_offset_bool=ON_TOOL_SHIFT_BOOL_ARR[tool_index]
+      local reg_offset_int=ON_TOOL_SHIFT_INT_ARR[tool_index]
+      local reg_offset_float=ON_TOOL_SHIFT_FLOAT_ARR[tool_index]
+      enter_critical
+      floatRegDummy=read_input_float_register(reg_offset_float+0)
+      tfg_Diameter_arr[tool_index]=floatRegDummy
+      intRegDummy=read_input_integer_register(reg_offset_int+0)
+      tfg_device_id_arr[tool_index]=intRegDummy
+      intRegDummy=read_input_integer_register(reg_offset_int+1)
+      tfg_product_code_arr[tool_index]=intRegDummy
+      intRegDummy=read_input_integer_register(reg_offset_int+2)
+      tfg_Status_arr[tool_index]=intRegDummy
+      boolRegDummy=read_input_boolean_register(reg_offset_bool+0)
+      tfg_Busy_arr[tool_index]=boolRegDummy
+      boolRegDummy=read_input_boolean_register(reg_offset_bool+1)
+      tfg_Grip_detected_arr[tool_index]=boolRegDummy
+      boolRegDummy=read_input_boolean_register(reg_offset_bool+2)
+      tfg_Force_Grip_detected_arr[tool_index]=boolRegDummy
+      exit_critical
+  end 
+  thread tfg_dataRead_thread():
+      while tfg_dataRead_running:
+          sync()
+          if(tfg_index==ON_DI_DUAL):
+            tfg_dataRead_RTDE(ON_DI_PRIMARY)
+            tfg_dataRead_RTDE(ON_DI_SECONDARY)
+          else:
+            tfg_dataRead_RTDE(tfg_index)
+          end
+      end
+  end
+  #======    End of OnRobot TFG Interface    ======#
+
+  #======    OnRobot TCP Messages    ======#
+  on_tcp_log_msg_default="OnRobot: Offset TVP robot impostato su:"
+  #======    End of OnRobot TCP Messages    ======#
+
+  #======    OnRobot TCP    ======#
+  on_tcp_offset_actual=ON_ZEROFRAME
+  on_tcp_offset_primary=ON_ZEROFRAME
+  on_tcp_static_primary=ON_ZEROFRAME
+  on_tcp_dynamic_primary=ON_ZEROFRAME
+  on_tcp_adapters=ON_ZEROFRAME
+  on_tcp_qc_primary=ON_ZEROFRAME
+  on_tcp_base_primary=ON_ZEROFRAME
+  on_tcp_gripper_static_primary=ON_ZEROFRAME
+  on_tcp_workpiece_primary=ON_ZEROFRAME
+  on_tcp_gripper_dynamic_primary=ON_ZEROFRAME
+  def on_tcp_init_adapters():
+      enter_critical
+      on_tcp_adapters=ON_ZEROFRAME
+      local adapterCount=length(on_tcp_adapters_array)
+      local i=0
+      while(i<adapterCount):
+        on_tcp_adapters=pose_trans(on_tcp_adapters,on_tcp_adapters_array[i])
+        i=i+1
+      end
+      exit_critical
+  end 
+  def on_tcp_update_primary():
+      on_tcp_gripper_dynamic_primary=p[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      enter_critical
+      on_tcp_dynamic_primary=pose_trans(on_tcp_static_primary,on_tcp_gripper_dynamic_primary)
+      on_tcp_offset_primary=pose_trans(on_tcp_dynamic_primary,on_tcp_workpiece_primary)
+      exit_critical
+  end 
+  def on_tcp_init_primary():
+      enter_critical
+      on_tcp_base_primary=pose_trans(on_tcp_adapters,on_tcp_qc_primary)
+      on_tcp_static_primary=pose_trans(on_tcp_base_primary,on_tcp_gripper_static_primary)
+      exit_critical
+      on_tcp_update_primary()
+  end 
+  def on_tcp_offset_set(TCP_offset):
+      on_tcp_offset_send(TCP_offset)
+      on_robot_TCP_offset=TCP_offset
+  end
+  def on_tcp_set_actual_to(isPrimary=True):
+      on_tcp_offset_actual=on_tcp_offset_primary
+      on_tcp_active_is_primary=isPrimary
+      on_tcp_offset_set(on_tcp_offset_actual)
+  end
+  #======    End of OnRobot TCP    ======#
+
+  #======    OnRobot Payload    ======#
+  on_cog_actual=ON_ZEROFRAME
+  on_mass_actual=0.0
+  on_cog_primary=ON_ZEROFRAME
+  on_cog_L1L2_primary=ON_ZEROFRAME
+  on_mass_primary=0.0
+  on_mass_L1L2_primary=0.0
+  on_cog_adapters=ON_ZEROFRAME
+  on_cog_qc_primary=ON_ZEROFRAME
+  on_cog_base_primary=ON_ZEROFRAME
+  on_cog_gripper_primary=ON_ZEROFRAME
+  on_cog_workpiece_primary=ON_ZEROFRAME
+  on_mass_adapters=0.0
+  on_mass_qc_primary=0.0
+  on_mass_base_primary=0.0
+  on_mass_gripper_primary=0.0
+  on_mass_workpiece_primary=0.0
+  ON_LB2KG001=0.45359237/100
+  def on_payload_init_adapters():
+      enter_critical
+      on_cog_adapters=ON_ZEROFRAME
+      on_mass_adapters=0.0
+      local massLAL0Ratio=0
+      local adapterAbsCOG=ON_ZEROFRAME
+      local tcp_adapter_offset=ON_ZEROFRAME
+      local adapterCount=length(on_tcp_adapters_array)
+      local i=0
+      while(i<adapterCount):
+          on_mass_adapters=on_mass_adapters+on_mass_adapters_array[i]
+          if(on_mass_adapters<=0):
+            massLAL0Ratio=0
+          else:
+            massLAL0Ratio=on_mass_adapters_array[i]/on_mass_adapters
+          end
+          adapterAbsCOG=pose_trans(tcp_adapter_offset,on_tcp_adapters_array[i])
+          adapterAbsCOG=p[adapterAbsCOG[0],adapterAbsCOG[1],adapterAbsCOG[2],0.0,0.0,0.0]
+          on_cog_adapters=interpolate_pose(on_cog_adapters,adapterAbsCOG,massLAL0Ratio)
+          on_cog_adapters=p[on_cog_adapters[0],on_cog_adapters[1],on_cog_adapters[2],0.0,0.0,0.0]
+          tcp_adapter_offset=pose_trans(tcp_adapter_offset,on_tcp_adapters_array[i])
+          i=i+1
+          sync()
+      end
+      exit_critical
+  end 
+  def on_payload_update_primary():
+      enter_critical
+      on_mass_primary=on_mass_L1L2_primary+on_mass_workpiece_primary
+      local massL1L2L3Ratio=on_mass_workpiece_primary/on_mass_primary
+      local workpieceAbsCOG=pose_trans(on_tcp_dynamic_primary,on_cog_workpiece_primary)
+      workpieceAbsCOG=p[workpieceAbsCOG[0],workpieceAbsCOG[1],workpieceAbsCOG[2],0.0,0.0,0.0]
+      on_cog_primary=interpolate_pose(on_cog_L1L2_primary,workpieceAbsCOG,massL1L2L3Ratio)
+      on_cog_primary=p[on_cog_primary[0],on_cog_primary[1],on_cog_primary[2],0.0,0.0,0.0]
+      exit_critical
+  end 
+  def on_payload_init_primary():
+      enter_critical
+      on_mass_base_primary=on_mass_adapters+on_mass_qc_primary
+      local massL0L1Ratio=on_mass_qc_primary/on_mass_base_primary
+      on_mass_L1L2_primary=on_mass_base_primary+on_mass_gripper_primary
+      local massL1L2Ratio=on_mass_gripper_primary/on_mass_L1L2_primary
+      local qcAbsCOG=pose_trans(on_tcp_adapters,on_cog_qc_primary)
+      qcAbsCOG=p[qcAbsCOG[0],qcAbsCOG[1],qcAbsCOG[2],0.0,0.0,0.0]
+      on_cog_base_primary=interpolate_pose(on_cog_adapters,qcAbsCOG,massL0L1Ratio)
+      on_cog_base_primary=p[on_cog_base_primary[0],on_cog_base_primary[1],on_cog_base_primary[2],0.0,0.0,0.0]
+      local gripperAbsCOG=pose_trans(on_tcp_base_primary,on_cog_gripper_primary)
+      gripperAbsCOG=p[gripperAbsCOG[0],gripperAbsCOG[1],gripperAbsCOG[2],0.0,0.0,0.0]
+      on_cog_L1L2_primary=interpolate_pose(on_cog_base_primary,gripperAbsCOG,massL1L2Ratio)
+      on_cog_L1L2_primary=p[on_cog_L1L2_primary[0],on_cog_L1L2_primary[1],on_cog_L1L2_primary[2],0.0,0.0,0.0]
+      exit_critical
+      on_payload_update_primary()
+  end
+  def on_payload_set_actual():
+      on_mass_actual =on_mass_primary
+      on_cog_actual=on_cog_primary
+
+      local CoG=[on_cog_actual[0],on_cog_actual[1],on_cog_actual[2]]
+      on_payload_set(on_mass_actual,CoG)
+  end
+  def on_payload_set(mass,CoG):
+      local center_of_gravity=[CoG[0],CoG[1],CoG[2]]
+      on_payload_send(center_of_gravity,mass)
+      if(on_isMetric):
+        local roundedMass=floor(mass*100+0.5)/100
+      else:
+        local roundedMass=floor(mass/ON_LB2KG001+0.5)*ON_LB2KG001
+      end
+      set_payload(roundedMass,center_of_gravity)
+      on_mass_actual=roundedMass
+      on_cog_actual=p[CoG[0],CoG[1],CoG[2],0.0,0.0,0.0]
+  end
+  #======    End of OnRobot Payload    ======#
+
+  #======    OnRobot QC TCP    ======#
+  def on_tcp_offset_send(TCP_offset):
+    on_robot_TCP_offset=TCP_offset
+  end 
+  def on_payload_send(CoG,mass):
+    on_robot_payload_cog=CoG
+    on_robot_payload_mass=mass
+  end
+  #======    End of OnRobot QC TCP    ======#
+
+  #======    OnRobot TFG Engine Messages    ======#
+  tfg_error_title="OnRobot - errore 3FG"
+  tfg_device_id_waiting="In attesa di un valido ID per OnRobot 3FG..."
+  tfg_device_id_timeout="Tempo di attesa di un valido ID per OnRobot 3FG scaduto.<br>Programma arrestato."
+  #======    End of OnRobot TFG Engine Messages    ======#
+
+  textmsg(on_devices_primary_log, ": Quick Changer + 3FG15 + [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]")
+  on_tcp_active_is_primary = True
+  on_tcp_adapters_array = []
+  on_mass_adapters_array = []
+  on_tcp_qc_primary = p[0.0, 0.0, 0.0136, 0.0, 0.0, 0.0]
+  on_cog_qc_primary = p[0.0, 0.0, 0.004, 0.0, 0.0, 0.0]
+  on_mass_qc_primary = 0.06
+  on_tcp_gripper_static_primary = p[0.0, 0.0, 0.156, 0.0, 0.0, 0.0]
+  on_cog_gripper_primary = p[0.000, 0.000, 0.083, 0.0, 0.0, 0.0]
+  on_mass_gripper_primary = 1.15
+  on_tcp_workpiece_primary = p[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  on_cog_workpiece_primary = p[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  on_mass_workpiece_primary = 0.0
+
+  #======    OnRobot RG Width Messages    ======#
+  tfg_grip_title="Presa OnRobot - TFG"
+  tfg_grip_return_error_n1="Comando TFG restituito con errore.<br>Assicurarsi che la larghezza richiesta sia entro i limiti.<br>Programma arrestato."
+  tfg_grip_return_error_n2="Il comando Presa TFG non ha applicato la forza all’estremità.<br>Programma arrestato."
+  #======    End of OnRobot RG Width Messages    ======#
+
+  #======    OnRobot TFG Diameter command tfg_grip, tfg_flexible_grip    ======#
+  tfg_cmd_move=0
+  tfg_cmd_grip=1
+  tfg_cmd_flexible_grip=2
+  def tfg_grip_or_move(grip_cmd,diameter,force,external_grip=True,stop_if_no_force=False,tool_index=0,blocking=True):
+      local retVal=0
+      tfg_Grip_guard_arr[tool_index]=False
+      sync()
+      if(tool_index==ON_DI_SECONDARY):
+        local isPrimary=False
+      else:
+        local isPrimary=True
+      end
+      sync()
+      if grip_cmd==tfg_cmd_grip:
+        retVal=on_tool_xmlrpc.tfg_grip(tool_index,diameter+0.0,force+0.0,not external_grip)
+      elif grip_cmd==tfg_cmd_move:
+        retVal=on_tool_xmlrpc.tfg_move(tool_index,diameter+0.0)
+      else:
+        retVal=on_tool_xmlrpc.tfg_flexible_grip(tool_index,diameter+0.0,force+0.0,not external_grip)
+      end
+      if(retVal!=0):
+        popup(tfg_grip_return_error_n1,tfg_grip_title,error=True,blocking=False)
+        halt
+      end
+      if blocking:
+        local timeout=0
+        while not tfg_Busy_arr[tool_index]:
+            sleep(0.008)
+            timeout=timeout+1
+            if timeout>20:
+                break
+            end
+        end
+        while(tfg_Busy_arr[tool_index]==True):
+            sync()
+        end
+        if stop_if_no_force and not tfg_Force_Grip_detected_arr[tool_index]:
+            popup(tfg_grip_return_error_n2,tfg_grip_title,error=True,blocking=False)
+            halt
+        end
+      end
+      return retVal
+  end 
+  def tfg_grip(diameter,force,external_grip=True,stop_if_no_force=True,tool_index=0,blocking=True):
+      retVal=tfg_grip_or_move(tfg_cmd_grip,diameter,force,external_grip,stop_if_no_force,tool_index,blocking)
+      return retVal
+  end 
+  def tfg_prepare(diameter,tool_index=0,blocking=True):
+      retVal=tfg_grip_or_move(tfg_cmd_move,diameter,0,False,False,tool_index,blocking)
+      return retVal
+  end 
+  def tfg_release(diameter,tool_index=0,blocking=True):
+      retVal=tfg_grip_or_move(tfg_cmd_move,diameter,0,False,False,tool_index,blocking)
+      return retVal
+  end 
+  def tfg_flexible_grip(diameter,force,external_grip=True,stop_if_no_force=True,tool_index=0,blocking=True):
+      retVal=tfg_grip_or_move(tfg_cmd_flexible_grip,diameter,force,external_grip,stop_if_no_force,tool_index,blocking)
+      return retVal
+  end
+  #======    End of OnRobot TFG Diameter command tfg_grip, tfg_flexible_grip    ======#
+
+  #======    OnRobot Run    ======#
+  sync()
+  textmsg(on_xmlrpc_start_ip,on_conn_ip)
+  on_regStart_conn=[ON_CONN_SHIFT_BOOL,ON_CONN_SHIFT_INT,ON_CONN_SHIFT_FLOAT]
+  on_regSum_conn=[ON_CONN_REG_SUM_BOOL,ON_CONN_REG_SUM_INT,ON_CONN_REG_SUM_FLOAT]
+  on_rtde_feed_open(on_conn_ip,on_conn_rtde_feed_name,on_regStart_conn,on_regSum_conn,ON_REGISTERS_SPEEDL_FLOAT)
+  sync()
+  on_set_rtde_watchdog(updateHz=0.2)
+  sync()
+  on_tcp_init_adapters()
+  on_payload_init_adapters()
+  on_tcp_init_primary()
+  on_payload_init_primary()
+
+  on_tcp_set_actual_to(on_tcp_active_is_primary)
+  sync()
+  #======    End of OnRobot Run    ======#
+
+  #======    OnRobot TFG Run    ======#
+  def tfg_wait_for_init(tool_index):
+    local tfg_timeout=0
+    while not(tfg_product_code_arr[tool_index]==TFG_DEVICE_ID_TFG15):
+        sync()
+        tfg_timeout=tfg_timeout+1
+        if(tfg_timeout>ON_INIT_TIMEOUT):
+            popup(tfg_device_id_timeout,tfg_error_title,error=True,blocking=False)
+            halt
+        end
+    end
+  end 
+  tfg_dataRead_running=True
+  sync()
+  tfg_dataRead_thrd=run tfg_dataRead_thread() # this thread is important
+  sync()
+  textmsg(tfg_device_id_waiting)
+  if(tfg_index==ON_DI_DUAL):
+      tfg_wait_for_init(ON_DI_PRIMARY)
+      tfg_wait_for_init(ON_DI_SECONDARY)
+  else:
+    tfg_wait_for_init(tfg_index)
+  end 
+  sync()
+  #======    End of OnRobot TFG Run    ======#
+
+  def myProgram():
+  end
+
+  myProgram()
+end
+
+esempio_script_mr()

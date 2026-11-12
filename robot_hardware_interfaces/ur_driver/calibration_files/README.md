@@ -1,0 +1,1 @@
+roslaunch ur_robot_driver ur5e_bringup.launch headless_mode:=true robot_ip:=192.168.0.100 kinematics_config:=$LOCOSIM_DIR/robot_hardware_interfaces/ur_driver/calibration_files/my_robot_calibration_X.yaml

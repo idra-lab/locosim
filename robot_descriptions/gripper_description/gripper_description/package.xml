@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>gripper_description</name>
+  <version>1.0.0</version>
+  <description>
+      URDF description for OnRobot 3finger end effector
+  </description>
+
+  <author>Simone Brentan</author>
+  <maintainer email="simobrentan@gmail.com">Simone Brentan</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>joint_state_publisher_gui</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>urdf</depend>
+  <depend>xacro</depend>
+  <depend>gazebo_grasp_plugin</depend>
+
+</package>
+
+

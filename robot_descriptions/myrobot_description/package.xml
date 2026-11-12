@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<package format="2">
+
+  <name>myrobot_description</name>
+  <version>0.0.1</version>
+  <description>Myrobot Description Package</description>
+
+  <license>BSD-3</license>
+
+  <author email="michele.focchi@unitn.it">Michele Focchi</author>
+  
+  <maintainer email="michele.focchi@unitn.it">Michele Focchi</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

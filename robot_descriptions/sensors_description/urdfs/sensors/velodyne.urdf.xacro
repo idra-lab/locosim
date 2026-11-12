@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/velodyne.gazebo.xacro" />
+
+
+	<!-- ===================================== VELODYNE ==================================== -->
+	<!-- The xacro macro xacro:velodyne contains: velodyne combo -->
+	<xacro:macro name="velodyne" params="name parent *origin">
+		<!-- Joints -->
+		<joint name="${name}_joint" type="fixed">
+			<xacro:insert_block name="origin"/>
+			<parent link="${parent}"/>
+			<child link="${name}_mount_link"/>
+		</joint>
+		<!-- velodyne sensor optical frame -->
+		<joint name="${name}_optical_frame_joint" type="fixed">
+			<origin xyz="${velodyne_x} ${velodyne_y} ${velodyne_z}" rpy="0.0 0.0 0.0"/>
+			<parent link="${name}_mount_link"/>
+			<child link="${name}"/>
+		</joint>
+
+
+		<!-- Links -->
+		<link name="${name}_mount_link">
+			<inertial>
+				<mass value="0.1"/>
+				<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/velodyne_hdl32e.dae" scale="1 1 1" />
+				</geometry>
+				<material name="gray">
+					<color rgba="0.5 0.5 0.5 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/velodyne_hdl32e.dae" scale="1 1 1" />
+				</geometry>
+			</collision>
+		</link>
+		<!-- rgb optical sensor link -->
+		<link name="${name}">
+			<inertial>
+				<mass value="0.1"/>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+			</inertial>
+		</link>
+
+		<!-- gazebo extensions -->
+		<xacro:velodyne_sensor link_name="${name}" frame_name="${name}_mount_link" lidar_name="${name}" />
+	</xacro:macro>
+
+</robot>

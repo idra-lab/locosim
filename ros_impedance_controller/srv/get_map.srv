@@ -1,0 +1,10 @@
+geometry_msgs/Point target
+float64 width
+float64 length
+float64 resolution_x
+float64 resolution_y
+---
+uint32 row_length
+float64[] height_array
+
+

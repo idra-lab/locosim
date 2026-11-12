@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<!-- ======================================= VICON MARKER ====================================== -->
+	<!-- The xacro macro xacro:vicon_marker contains: vicon marker link -->
+	<xacro:macro name="vicon" params="child *origin">
+
+		<!-- Joints -->
+		<joint name="vicon_maker_joint" type="floating">
+			<xacro:insert_block name="origin"/>
+			<parent link="vicon_marker_link"/>
+			<child link="${child}"/>
+		</joint>
+		
+		<!-- Links -->
+		<link name="vicon_marker_link">
+			<inertial>
+				<mass value="0.001"/>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.005" />
+				</geometry>
+				<material name="gray">
+					<color rgba="0.5 0.5 0.5 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<sphere radius="0.005" />
+				</geometry>
+			</collision>
+		</link>
+
+	</xacro:macro>
+</robot>

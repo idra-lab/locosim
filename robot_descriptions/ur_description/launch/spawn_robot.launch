@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<launch>
+        <arg name="robot_name" default="ur5" />
+        <arg name="gui" default="true" />
+        <arg name="rviz_conf" default="$(find ur_description)/rviz/single_robot.rviz"/>
+	<arg name="spawn_x" default="0.0" />
+	<arg name="spawn_y" default="0.0" />
+	<arg name="spawn_z" default="1.8" />
+
+        <!-- load robot name into param server-->
+        <param name="robot_name" type="str" value="$(arg robot_name)" />
+
+
+         <!-- 1 - load the robot URDF as robot_description into param server  -->
+         <include file="$(find ur_description)/launch/upload.launch">
+		    <arg name="gazebo" value="true" />
+            	    <arg name="gripper" value="false"/>            	  
+	 </include>
+        
+  	
+     	<!-- 2 launch gzserver (with empty world)/ gzcclient: Starts Gazebo and load the empty world if requested to do so - -->
+        <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+                <arg name="paused" default="false" />
+                <arg name="use_sim_time" default="true" />
+                <arg name="gui" value="$(arg gui)" />
+                <arg name="headless" default="false" />
+                <arg name="debug" default="false" />
+                <arg name="verbose" value="true" />
+        </include>
+
+        <!-- 3 Spawn a robot (described in robot_description) into Gazebo -->
+        <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param $(arg robot_name)/robot_description -model ur5 -x $(arg spawn_x) -y $(arg spawn_y) -z $(arg spawn_z)"/>
+
+
+
+</launch>
+

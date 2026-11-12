@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+	<model name="45_degree_ramp">
+		<static>true</static>
+		<link name="link">
+			<pose>0 0 0 0 0 0</pose>
+			<collision name="collision">
+				<geometry>
+					<mesh>
+						<uri>model://ramp_45/mesh/ramp_45.dae</uri>
+						<scale>1.0 1.0 1.0</scale>
+					</mesh>
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+                                                        <mu>1</mu>
+                                                        <mu2>1</mu2>
+						</ode>
+					</friction>
+				</surface>
+			</collision>
+			<visual name="visual">
+				<geometry>
+					<mesh>
+						<uri>model://ramp_45/mesh/ramp_45.dae</uri>
+						<scale>1.0 1.0 1.0</scale>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+	</model>
+</sdf>

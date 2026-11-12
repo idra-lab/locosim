@@ -1,0 +1,47 @@
+<package>
+  <name>sensors_description</name>
+  <version>0.0.1</version>
+  <description>
+	This package contains the description (mechanical, kinematic, visual,
+  plugin, etc.) of various sensors used in robotics. The files in this package
+  are parsed and used by a variety of other components. Most users will
+  not interact directly with this package.
+  </description>
+  <maintainer email="gennaro.raiola@gmail.com">Gennaro Raiola</maintainer>
+
+  <license>GNU General Public License v3.0</license>
+
+  <author>Gennaro Raiola</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>convex_decomposition</build_depend>
+  <build_depend>ivcon</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>gazebo_plugins</build_depend>
+  <build_depend>gazebo_ros</build_depend>
+  <build_depend>gazebo_msgs</build_depend>
+  <build_depend>angles</build_depend>
+
+  <run_depend>xacro</run_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>gazebo_plugins</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_msgs</run_depend>
+
+  <export>
+    <gazebo_ros
+      plugin_path="${prefix}/lib"
+      gazebo_media_path="${prefix}"
+      gazebo_model_path="${prefix}/models"
+      />
+  </export>
+
+</package>

@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<robot name="solo" xmlns:xacro="http://ros.org/wiki/xacro">
+	<xacro:arg name="flywheel" default="false"/>
+    <!-- left front leg -->
+    <group name="lf_leg">
+        <joint name="lf_haa_joint" />
+        <joint name="lf_hfe_joint" />
+        <joint name="lf_kfe_joint" />
+        <chain base_link="base_link" tip_link="lf_foot" />
+    </group>
+    <!-- right front leg -->
+    <group name="rf_leg">
+        <joint name="rf_haa_joint" />
+        <joint name="rf_hfe_joint" />
+        <joint name="rf_kfe_joint" />
+        <chain base_link="base_link" tip_link="rf_foot" />
+    </group>
+    <!-- left hind leg -->
+    <group name="lh_leg">
+        <joint name="lh_haa_joint" />
+        <joint name="lh_hfe_joint" />
+        <joint name="lh_kfe_joint" />
+        <chain base_link="base_link" tip_link="lh_foot" />
+    </group>
+    <!-- right hind leg -->
+    <group name="rh_leg">
+        <joint name="rh_haa_joint" />
+        <joint name="rh_hfe_joint" />
+        <joint name="rh_kfe_joint" />
+        <chain base_link="base_link" tip_link="rh_foot" />
+    </group>
+
+
+    <end_effector name="lf_foot" parent_link="FL_FOOT" group="lf_leg" />
+    <end_effector name="rf_foot" parent_link="FR_FOOT" group="rf_leg" />
+    <end_effector name="lh_foot" parent_link="HL_FOOT" group="lh_leg" />
+    <end_effector name="rh_foot" parent_link="HR_FOOT" group="rh_leg" />
+    
+    <!-- Include flywheel -->
+	<xacro:if value="$(arg flywheel)">
+	    <group name="l_wheel">
+		    <joint name="z_left_wheel_joint" />
+    	</group>
+    	<group name="r_wheel">
+		    <joint name="z_right_wheel_joint" />
+    	</group>
+    	<group name="f_wheel">
+		    <joint name="z_front_wheel_joint" />
+    	</group>
+    	<group name="b_wheel">
+		    <joint name="z_back_wheel_joint" />
+		    
+    	</group>
+		<group name="flywheel">
+		    <group name="l_wheel" />
+		    <group name="r_wheel" />
+		    <group name="f_wheel" />
+		    <group name="b_wheel" />
+		</group>
+		
+		<group name="all_legs_and_flywheel">
+		    <group name="lf" />
+		    <group name="rf" />
+		    <group name="lh" />
+		    <group name="rh" />
+		    <group name="flywheel" />
+		</group>
+		
+                <group_state name="home" group="all_legs">
+		    <joint name="floating_base_joint" value="0. 0. 0.223 0. 0. 0. 1." />
+		    <joint name="lf_haa_joint" value="-0.0" />
+                    <joint name="lf_hfe_joint" value="0.75" />
+                    <joint name="lf_kfe_joint" value="-1.5" />
+		    <joint name="lh_haa_joint" value="-0.0" />
+                    <joint name="lh_hfe_joint" value="-0.75" />
+                    <joint name="lh_kfe_joint" value="1.5" />
+		    <joint name="rf_haa_joint" value="-0.0" />
+                    <joint name="rf_hfe_joint" value="0.75" />
+                    <joint name="rf_kfe_joint" value="-1.5" />
+		    <joint name="rh_haa_joint" value="-0.0" />
+                    <joint name="rh_hfe_joint" value="-0.75" />
+                    <joint name="rh_kfe_joint" value="1.5" />
+		    <joint name="z_left_wheel_joint"  value="0" />
+		    <joint name="z_right_wheel_joint" value="0" />
+		    <joint name="z_front_wheel_joint" value="0" />
+		    <joint name="z_back_wheel_joint"  value="0" />
+		</group_state>
+	</xacro:if>
+
+
+	<xacro:unless value="$(arg flywheel)">
+		<group name="all_legs">
+		    <group name="lf" />
+		    <group name="rf" />
+		    <group name="lh" />
+		    <group name="rh" />
+		</group>
+		
+                <group_state name="home" group="all_legs">
+		    <joint name="floating_base_joint" value="0. 0. 0.223 0. 0. 0. 1." />
+                    <joint name="lf_haa_joint" value="0.0" />
+                    <joint name="lf_hfe_joint" value="0.75" />
+                    <joint name="lf_kfe_joint" value="-1.5" />
+                    <joint name="lh_haa_joint" value="0.0" />
+                    <joint name="lh_hfe_joint" value="-0.75" />
+                    <joint name="lh_kfe_joint" value="1.5" />
+                    <joint name="rf_haa_joint" value="-0.0" />
+                    <joint name="rf_hfe_joint" value="0.75" />
+                    <joint name="rf_kfe_joint" value="-1.5" />
+                    <joint name="rh_haa_joint" value="-0.0" />
+                    <joint name="rh_hfe_joint" value="-0.75" />
+                    <joint name="rh_kfe_joint" value="1.5" />
+		</group_state>
+	
+	</xacro:unless>
+    
+
+</robot>

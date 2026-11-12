@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/stereo_camera.gazebo.xacro"/>
+
+	<xacro:macro name="vislab_3dve" params="name parent xyz rpy high_res hfov">
+		<joint name="${name}_vislab_3dve_mount_joint" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${name}_mount_link"/>
+			<origin xyz="${xyz}" rpy="${rpy}"/>
+		</joint>
+
+		<joint name="${name}_optical_joint" type="fixed">
+			<parent link="${name}_mount_link"/>
+			<child link="${name}_optical_frame"/>
+			<!--<origin xyz="0 0 0" rpy="0 0 0"/>-->
+			<origin xyz="0 -0.075 0.00" rpy="-${PI/2} 0 -${PI/2}"/>
+		</joint>
+
+
+		<link name="${name}_mount_link">
+			<visual>
+				<origin xyz="0.018 0 0" rpy="${PI/2} 0 ${-PI/2}"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/vislab_3dve.stl"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0.018 0 0" rpy="${PI/2} 0 ${-PI/2}"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/vislab_3dve.stl"/>
+				</geometry>
+			</collision>
+			<inertial>
+				<mass value="${b2mass}" />
+				<inertia ixx="${1/12 * b2mass * (b2ly * b2ly + b2lz * b2lz)}" ixy="0" ixz="0"
+						 iyy="${1/12 * b2mass * (b2lx * b2lx + b2lz * b2lz)}" iyz="0"
+						 izz="${1/12 * b2mass * (b2lx * b2lx + b2ly * b2ly)}" />
+			</inertial>
+		</link>
+
+		<link name="${name}_optical_frame">
+			<inertial>
+				<mass value="1E-6" />
+				<inertia ixx="1E-6" ixy="0" ixz="0"
+						 iyy="1E-6" iyz="0" izz="1E-6" />
+			</inertial>
+		</link>
+
+		<xacro:if value="${high_res}">
+			<xacro:stereo_camera reference="${name}_mount_link"	frame_id="${name}_mount_link"
+				ns="${name}" hfov="${hfov}" baseline="0.15" update_rate="25" width="640" height="480" format="R8G8B8"/>
+		</xacro:if>
+
+		<xacro:unless value="${high_res}">
+			<xacro:stereo_camera reference="${name}_mount_link" ns="${name}" frame_id="${name}_mount_link"
+				update_rate="25" baseline="0.15"  hfov="${hfov}" width="640" height="480" format="R8G8B8" near="0.05" far="300"/>
+		</xacro:unless>
+	</xacro:macro>
+
+	<!-- A vislab 3dve with a 72-degre HFOV lens -->
+	<xacro:macro name="vislab_3dve_72" params="name parent xyz rpy high_res">
+		<xacro:vislab_3dve name="${name}" parent="${parent}" xyz="${xyz}" rpy="${rpy}" high_res="${high_res}" hfov="1.2566"/>
+	</xacro:macro>
+
+</robot>

@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<physics type="ode">
+
+      <ode>
+ 
+        <constraints>
+          <contact_max_correcting_vel>0.1</contact_max_correcting_vel>
+          <contact_surface_layer>0.0001</contact_surface_layer>
+        </constraints>
+      </ode>
+	<max_contacts>10</max_contacts>
+	</physics>
+
+	<model name="tavolo">
+	    <static>true</static>
+		<link name="link">
+		   
+		      <collision name="collision">
+			<geometry>			 
+		      		<cylinder>
+			    	    <radius>0.125</radius>
+				    <length>0.3</length>
+			 	</cylinder>
+			</geometry>
+		      </collision>
+
+		      <visual name="visual">
+			 <material>  
+			  <ambient>0.1 0.1 0.1 1</ambient>
+			  <diffuse>0.1 0.1 0.2 1</diffuse>
+			  <specular>0 0 0 0</specular>
+			  <emissive>0 0 0 1</emissive>
+			</material>  
+			<geometry>			 
+		      		<cylinder>
+			    	    <radius>0.125</radius>
+				    <length>0.3</length>
+			 	</cylinder>
+			</geometry>
+		      </visual>	
+
+
+		</link>
+	</model>
+</sdf>
+

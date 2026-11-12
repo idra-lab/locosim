@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<robot name="myrobot" xmlns:xacro="http://ros.org/wiki/xacro">
+    
+    <!--- new_gazebo_version should be false by default because pinocchio needs it!-->
+    <xacro:arg name="robot_name" default="myrobot"/> 
+    
+    <xacro:include filename="$(find myrobot_description)/gazebo/gazebo.urdf.xacro">
+    	<xacro:arg name="task_period" value="$(arg task_period)"/>
+	<xacro:arg name="robot_name" value="$(arg robot_name)"/>
+    </xacro:include>
+
+    <xacro:include filename="$(find myrobot_description)/urdfs/myleg.xacro"/>
+
+
+    <link name="base_link">    
+   	<inertial>
+		<origin xyz="0.0 0.0 0.0"/>
+		<mass value="15" />
+		<inertia  ixx="0.001" ixy="0.0"  ixz="0.0"  iyy="0.001"  iyz="0.0"  izz="0.001" />
+	</inertial>
+	<visual>
+		<origin xyz="0 0.0 0.0" rpy="0 0 0"/>
+		<geometry>
+			<box size="0.1 0.1 0.1"/>
+		</geometry>
+	</visual>
+	<collision>
+		<origin  xyz="0 0.0 0.0 " rpy="0 0 0"/>
+		<geometry>
+			<box size="0.1 0.1 0.1"/>
+		</geometry>
+	</collision>
+    </link>
+
+
+    
+    <!-- LEFT FRONT LEG -->
+     <xacro:leg
+    	name="lf"
+    	parent="base_link"
+    	robot_name="$(arg robot_name)">
+    	<origin xyz="0.1 0.1 0.0" rpy="0 0 0"/>
+    </xacro:leg>
+
+    <!-- RIGHT FRONT LEG -->
+    <xacro:leg
+    	name="rf"
+    	parent="base_link"
+    	robot_name="$(arg robot_name)">
+    	<origin xyz="0.1 -0.1 0.0" rpy="0 0 0"/>
+    </xacro:leg>
+
+    <!-- LEFT HIND LEG -->
+     <xacro:leg
+    	name="lh"
+    	parent="base_link"
+    	robot_name="$(arg robot_name)">
+    	<origin xyz="-0.1 0.1 0.0" rpy="0 0 0"/>
+    </xacro:leg>
+
+    <!-- RIGHT HIND LEG -->
+    <xacro:leg
+    	name="rh"
+    	parent="base_link"
+    	robot_name="$(arg robot_name)">
+    	<origin xyz="-0.1 -0.1 0.0" rpy="0 0 0"/>
+    </xacro:leg>
+
+
+    
+</robot>

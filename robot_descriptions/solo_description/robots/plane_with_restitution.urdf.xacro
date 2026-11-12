@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<robot name="plane" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="color_name" value="red" />
+    <xacro:property name="color" value="1.0 0.0 0.0" />
+    <xacro:property name="opacity" value="1.0" />
+
+    <xacro:include filename="$(find solo_description)/gazebo/gazebo_plane.urdf.xacro">
+        <xacro:arg name="task_period" value="$(arg task_period)"/>
+    </xacro:include>
+    
+    <link name="base_plane"/>
+    
+    <joint name="planeJoint" type="fixed">
+        <parent link="base_plane" />
+        <child link="planeLink" />
+        <origin xyz="0 0 -0.25" rpy="0 0 0" />
+    </joint>
+
+    <link name="planeLink">
+        <contact>
+            <lateral_friction value="1.0"/>
+            <restitution value="0.0"/>
+        </contact>
+        <inertial>
+            <origin rpy="1 0 0" xyz="0 0 0"/>
+            <mass value=".0"/>
+            <inertia ixx="0" ixy="0" ixz="0" 
+                             iyy="0" iyz="0" 
+                                     izz="0"/>
+        </inertial>
+        <visual>
+            <origin rpy="1 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="package://solo_description/meshes/plane.obj" scale="1 1 1"/>
+            </geometry>
+            <material name="${color_name}">
+                <color rgba="${color} ${opacity}"/>
+            </material>
+        </visual>
+        <collision>
+            <origin rpy="1 0 0" xyz="0 0 -5"/>
+            <geometry>
+                <box size="30 30 10"/>
+            </geometry>
+        </collision>
+    </link>
+</robot>

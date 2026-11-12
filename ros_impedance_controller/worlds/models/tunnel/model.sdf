@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<model name="tunnel">
+        <static>true</static>
+	<link name="link">
+	
+	<!-- location of the tunnel inside the world -->
+	<pose>0. 1. 0. 0.2618 0. 0.</pose>
+		<collision name="collision">
+			<geometry>
+		    	    <mesh>
+		    	        <!-- scaling for better fit the robot model -->
+				<uri>model://tunnel/mesh/gasdotto.stl</uri>
+				<scale>1. 1. 1.</scale>
+			    </mesh>	   
+			</geometry>
+		</collision>
+			   
+		<visual name="visual">
+			<geometry>
+			    <mesh>
+				<uri>model://tunnel/mesh/gasdotto.stl</uri>
+				<scale>1. 1. 1. </scale>
+			    </mesh>
+			</geometry>
+		</visual>
+	</link>
+</model>
+</sdf>
+

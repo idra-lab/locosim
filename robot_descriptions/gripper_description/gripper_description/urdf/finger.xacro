@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+ <xacro:include filename="$(find gripper_description)/urdf/finger_transmission.xacro" />
+
+<xacro:macro name="finger" params="name parent transmission_hw_interface gripper_active *origin">
+
+<xacro:if value="${gripper_active}">
+  <xacro:finger_transmission name="${name}" hw_interface="${transmission_hw_interface}" />
+  <joint name="${name}_joint" type="revolute">
+    <parent link="${parent}"/>
+    <child link="${name}_link"/>
+    <axis xyz="0 -1 0"/>
+    <xacro:insert_block name="origin"/>
+    <limit effort="50" velocity="10.0" lower="0" upper="3.14" />
+  </joint>
+</xacro:if>
+
+<xacro:unless value="${gripper_active}">
+  <joint name="${name}_joint" type="fixed">
+    <parent link="${parent}"/>
+    <child link="${name}_link"/>
+    <xacro:insert_block name="origin"/>
+  </joint>
+</xacro:unless>
+
+
+  <link name="${name}_link">
+      <inertial>
+          <origin xyz="0.0 0.0 0.0"/>
+          <mass value="0.05" />
+          <inertia  ixx="0.001" ixy="0.0"  ixz="0.0"  iyy="0.001"  iyz="0.0"  izz="0.001" />
+    </inertial>
+     <visual>
+        <origin xyz="0 0.05 0.03" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="package://gripper_description/meshes/finger.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+     </visual>
+     <collision>
+        <origin  xyz="0 0.05 0.03" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="package://gripper_description/meshes/finger.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+     </collision>
+  </link>
+
+
+
+
+ <gazebo reference="${name}_link">
+    <collision name="${name}_link_collision">
+      <surface>
+        <friction>
+          <torsional>
+            <coefficient>10.0</coefficient>
+            <use_patch_radius>true</use_patch_radius>
+            <patch_radius>0.05</patch_radius>
+          </torsional>
+        </friction>
+        <contact>
+          <poissons_ratio>0.5</poissons_ratio>
+          <elastic_modulus>1e8</elastic_modulus>
+        </contact>
+      </surface>
+    </collision>
+    <mu1>10</mu1>
+    <mu2>10</mu2>
+
+    <kp>1000000.0</kp>
+    <kd>10.0</kd> 
+    <fdir1>0 0 1</fdir1>
+    <minDepth>0.001</minDepth>
+	    <maxVel>0.0</maxVel>
+
+    <maxContacts>1</maxContacts>
+    <material>Gazebo/RedBright</material>
+  </gazebo>
+
+
+</xacro:macro>
+</robot>

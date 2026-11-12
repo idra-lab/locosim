@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/stereo_camera.gazebo.xacro"/>
+  
+
+	<!-- ================================ Bumblebee ============================== -->
+	<!-- The xacro macro xacro:bumblebee contains: camera, mount and optical frame -->
+	<xacro:macro name="bumblebee" params="parent_link xyz rpy ns frame_prefix high_res hfov">
+		<joint name="bumblebee_mount_joint" type="fixed">
+			<parent link="${parent_link}"/>
+			<child link="${frame_prefix}mount_link"/>
+			<origin xyz="${xyz}" rpy="${rpy}"/>
+		</joint>
+		
+		<joint name="${frame_prefix}optical_joint" type="fixed">
+			<parent link="${frame_prefix}mount_link"/>
+			<child link="${frame_prefix}optical_frame"/>
+			<origin xyz="0 -0.06 0.018" rpy="-${PI/2} 0 -${PI/2}"/>
+		</joint>
+
+
+		<link name="${frame_prefix}mount_link">
+			<visual>
+				<origin xyz="0 0 0.018" rpy="${PI/2} 0 ${PI/2}"/>  
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/bumblebee.dae"/>
+				</geometry>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0.018" rpy="${PI/2} 0 ${PI/2}"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/bumblebee.dae"/>
+				</geometry>
+			</collision>
+			<inertial>
+				<mass value="${b2mass}" />
+				<inertia ixx="${1/12*b2mass*(b2ly*b2ly + b2lz*b2lz)}" ixy="0" ixz="0" 
+						 iyy="${1/12*b2mass*(b2lx*b2lx + b2lz*b2lz)}" iyz="0" 
+						 izz="${1/12*b2mass*(b2lx*b2lx + b2ly*b2ly)}" />
+			</inertial>
+		</link>
+
+		<link name="${frame_prefix}optical_frame">
+			<inertial>
+				<mass value="1E-6" />
+				<inertia ixx="1E-6" ixy="0" ixz="0" 
+						 iyy="1E-6" iyz="0" izz="1E-6" />
+				</inertial>
+		</link>
+
+		<xacro:if value="${high_res}">
+			<xacro:stereo_camera 
+				reference="${frame_prefix}mount_link" 
+				frame_id="${frame_prefix}mount_link"
+				ns="${ns}"
+				hfov="${hfov}"
+				baseline="0.120"
+				update_rate="24"
+				width="1024"
+				height="768"
+				format="R8G8B8"/>
+		</xacro:if>
+
+		<xacro:unless value="${high_res}">
+			<xacro:stereo_camera 
+				reference="${frame_prefix}mount_link" 
+				frame_id="${frame_prefix}mount_link"
+				ns="${ns}"
+				hfov="${hfov}"
+				baseline="0.120"
+				update_rate="48"
+				width="640"
+				height="480"
+				format="R8G8B8"
+				near="0.05"
+				far="300"/>
+		</xacro:unless>
+	</xacro:macro>
+
+	<!-- A bumblebee with a 97-degre HFOV lens -->
+	<xacro:macro name="bumblebee_97" params="parent_link xyz rpy ns frame_prefix high_res">
+		<xacro:bumblebee
+			parent_link="${parent_link}" 
+			xyz="${xyz}"
+			rpy="${rpy}"
+			ns="${ns}"
+			frame_prefix="${frame_prefix}"
+			high_res="${high_res}"
+			hfov="1.69296937443"/>
+	</xacro:macro>
+
+	<!-- A bumblebee with a 66-degre HFOV lens -->
+	<xacro:macro name="bumblebee_66" params="parent_link xyz rpy ns frame_prefix high_res">
+		<xacro:bumblebee
+			parent_link="${parent_link}" 
+			xyz="${xyz}"
+			rpy="${rpy}"
+			ns="${ns}"
+			frame_prefix="${frame_prefix}"
+			high_res="${high_res}"
+			hfov="1.15191730632"/>
+	</xacro:macro>
+
+	<!-- A bumblebee with a 43-degre HFOV lens -->
+	<xacro:macro name="bumblebee_43" params="parent_link xyz rpy ns frame_prefix high_res">
+		<xacro:bumblebee
+			parent_link="${parent_link}" 
+			xyz="${xyz}"
+			rpy="${rpy}"
+			ns="${ns}"
+			frame_prefix="${frame_prefix}"
+			high_res="${high_res}"
+			hfov="0.75049157835"/>
+	</xacro:macro>
+</robot>

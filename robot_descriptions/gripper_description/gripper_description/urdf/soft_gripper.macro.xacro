@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+
+
+	
+<xacro:macro name="soft_gripper" params="transmission_hw_interface gripper_active grasp_plugin">
+
+	  <xacro:include filename="$(find gripper_description)/urdf/soft_finger.xacro"/>
+	  <xacro:property name="PI" value="3.1415926535897931"/>
+	  <xacro:property name="cos_PI_3" value="0.5"/>
+	  <xacro:property name="sin_PI_3" value="0.866"/>
+	  
+
+	  <link name="gripper_base">
+	    <visual>
+	        <origin rpy="0 0 0" xyz="0 0 0.0" />
+	   	<geometry>
+		    <mesh filename="package://gripper_description/meshes/soft_gripper_base_down.stl"/>
+		</geometry>
+	    </visual>
+	    <collision>
+	        <origin rpy="0 0 0" xyz="0 0 -0.0095" />
+	    <geometry>
+		    <mesh filename="package://gripper_description/meshes/soft_gripper_base_down.stl"/>
+		</geometry>
+	    </collision>
+	    <inertial>
+		<origin xyz="2.073e-05   1.45286e-03  -1.1049e-03" rpy="0 0 0" />
+		<mass value="0.168" />
+		<inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04" />
+	    </inertial>
+	  </link>
+
+
+
+	<joint name="fixed_ee_gripper" type="fixed">
+			<origin xyz="0 0 0.12" rpy="0 0 0"/>
+			<parent link="gripper_base"/>
+			<child  link="tool0"/>
+	</joint>
+	<link name="tool0"/>
+
+
+	<xacro:soft_finger
+		name="hand_1"
+		parent="gripper_base"
+		transmission_hw_interface="${transmission_hw_interface}"
+		gripper_active="${gripper_active}">
+		<origin xyz="0 -0.028 0.09" rpy=" 0 0 0" />
+	</xacro:soft_finger>
+
+	<xacro:soft_finger
+		name="hand_2"
+		parent="gripper_base"
+		transmission_hw_interface="${transmission_hw_interface}"
+		gripper_active="${gripper_active}">
+		 <origin xyz="0 0.028 0.09" rpy=" 0 0 ${-pi}" />
+	</xacro:soft_finger>
+
+	  <gazebo reference="gripper_base">
+		<material>Gazebo/Grey</material>
+	  </gazebo>
+	
+
+	<!-- the plugin for grasping that creates a dynamic link with the object when grasping forces are sent is described here:-->
+	<!-- https://github-wiki-see.page/m/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin-->
+	<xacro:if value="${grasp_plugin}">
+		<gazebo>
+		   <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+			<arm>
+			   <arm_name>ur5</arm_name>
+			   <palm_link> wrist_3_link  </palm_link>
+			   <gripper_link> hand_1_link </gripper_link>
+			   <gripper_link> hand_2_link </gripper_link>
+			</arm>
+		       <forces_angle_tolerance>100</forces_angle_tolerance>
+		       <update_rate>500</update_rate>
+		       <grip_count_threshold>4</grip_count_threshold>
+		       <max_grip_count>20</max_grip_count>
+		       <release_tolerance>0.01</release_tolerance>
+		       <disable_collisions_on_attach>true</disable_collisions_on_attach>
+		       <contact_topic>__default_topic__</contact_topic>
+		    </plugin>
+		</gazebo>
+
+	</xacro:if>
+
+  </xacro:macro>
+</robot>
+

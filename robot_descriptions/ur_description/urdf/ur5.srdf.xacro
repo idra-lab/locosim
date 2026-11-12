@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<robot name="ur5" xmlns:xacro="http://ros.org/wiki/xacro">
+
+		
+<group_state name="home" group="chains">
+    <joint name="shoulder_pan_joint" value="-0.32" />
+    <joint name="shoulder_lift_joint" value="-0.78" />
+    <joint name="elbow_joint" value="-2.56" />
+    <joint name="wrist_1_joint" value="-1.63" />
+    <joint name="wrist_2_joint" value="-1.57" />
+    <joint name="wrist_3_joint" value="3.49" />
+</group_state>
+
+
+
+</robot>

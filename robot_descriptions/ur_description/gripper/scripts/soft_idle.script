@@ -1,0 +1,107 @@
+def gripper_control():
+  set_gravity([-8.503688472232546E-16, -8.503688472232541E-16, -9.82])
+  set_tcp(p[0.0,0.0,0.1,0.0,0.0,0.0])
+  step_count_f3537c57_a4fe_4fad_a7a4_99cc83630103 = 0.0
+  thread Step_Counter_Thread_152e98ad_726a_42b2_b351_c54d84586b78():
+    while (True):
+      step_count_f3537c57_a4fe_4fad_a7a4_99cc83630103 = step_count_f3537c57_a4fe_4fad_a7a4_99cc83630103 + 1.0
+      sync()
+    end
+  end
+  run Step_Counter_Thread_152e98ad_726a_42b2_b351_c54d84586b78()
+  set_tool_communication(False, 115200, 0, 1, 1.5, 3.5)
+  set_tool_output_mode(0)
+  set_tool_digital_output_mode(0, 1)
+  set_tool_digital_output_mode(1, 1)
+  set_tool_voltage(0)
+  set_safety_mode_transition_hardness(1)
+  set_standard_analog_input_domain(0, 1)
+  set_standard_analog_input_domain(1, 1)
+  set_tool_analog_input_domain(0, 1)
+  set_tool_analog_input_domain(1, 1)
+  set_analog_outputdomain(0, 0)
+  set_analog_outputdomain(1, 0)
+  set_input_actions_to_default()
+  set_target_payload(0.300000, [0.000000, 0.000000, 0.000000], [0.000000, 0.000207, 0.000207, 0.000000, 0.000000, 0.000000])
+  global Base1=p[0.038543525921778135,-0.10313613872903413,-0.04706004814949652,1.3783032603279426E-5,-3.1415824345891945,-2.3461239617812918E-4]
+  global frontale=p[0.5860819890425135,0.4967417039318601,0.8030239678822708,2.1086797508500866E-5,-2.2216066414467983,2.221274848443117]
+  # begin: URCap Installation Node
+  #   Source: External Control, 1.0.5, FZI Research Center for Information Technology
+  #   Type: External Control
+  # end: URCap Installation Node
+  # begin: URCap Installation Node
+  #   Source: SRI_coDrive, 1.1.1, Soft Robotics Inc
+  #   Type: SRI coDrive Configuration
+  # coDrive Deactivate all digital outputs
+  def coDrive_stop():
+    # D3 off
+    set_standard_digital_out(2, False)
+    # D2 off
+    set_standard_digital_out(1, False)
+    # D1 off
+    set_standard_digital_out(0, False)
+  end
+  #
+  # coDrive Grip function
+  def coDrive_grip():
+    Sensor = get_standard_analog_in(0)
+    if (Sensor < grip_volt):
+      # Turn on D1 and D3
+      set_standard_digital_out(2, True)
+      set_standard_digital_out(0, True)
+      count = 0
+      while ((Sensor < grip_volt) and (count < 6.000000)):
+        sleep(0.01)
+        count = count + 0.010000
+        Sensor = get_standard_analog_in(0)
+      end
+      coDrive_stop()
+      if not((count < 6.000000)):
+        popup("Failed to reach set grip strength",title="coDrive Timeout", error=True, blocking=True)
+      end
+    end
+  end
+  #
+  # coDrive Release function
+  def coDrive_release():
+    Sensor = get_standard_analog_in(0)
+    if (Sensor > release_volt):
+      # Turn on D2 and D3
+      set_standard_digital_out(2, True)
+      set_standard_digital_out(1, True)
+      count = 0
+      while ((Sensor > release_volt) and (count < 6.000000)):
+        sleep(0.01)
+        count = count + 0.010000
+        Sensor = get_standard_analog_in(0)
+      end
+      coDrive_stop()
+      if not((count < 6.000000)):
+        popup("Failed to reach set release amount",title="coDrive Timeout", error=True, blocking=True)
+      end
+    end
+  end
+  # Set analog input to 0-10V
+  set_standard_analog_input_domain(0, 1)
+  # All digital outputs low when program stopped
+  set_runstate_standard_digital_output_to_value(2, 1)
+  set_runstate_standard_digital_output_to_value(1, 1)
+  set_runstate_standard_digital_output_to_value(0, 1)
+  # Sensor offset 2.963V
+  # Default Grip strength 5.0
+  grip_volt = 3.0
+  # Default Release amount -2.5
+  release_volt = 2.818
+  coDrive_stop()
+  # end: URCap Installation Node
+  $ 1 "Programma Robot"
+  # begin: URCap Program Node
+  #   Source: SRI_coDrive, 1.1.1, Soft Robotics Inc
+  #   Type: SRI coDrive
+  $ 2 "coDrive Grip"
+  coDrive_grip()
+  # end: URCap Program Node
+  end
+  coDrive_stop()
+end
+gripper_control()

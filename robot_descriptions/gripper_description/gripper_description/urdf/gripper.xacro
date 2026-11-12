@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<robot name="gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+		
+		
+		<xacro:arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface" />
+		<xacro:arg name="grasp_plugin" default="false" />
+		<xacro:arg name="gripper_active" default="false" />
+		<xacro:arg name="soft_gripper" default="true" />
+		<xacro:arg name="robotiq_gripper" default="false" />
+		
+		<xacro:if value="$(arg soft_gripper)">
+			<xacro:include filename="$(find gripper_description)/urdf/soft_gripper.macro.xacro" />
+			<xacro:soft_gripper 
+			transmission_hw_interface="$(arg transmission_hw_interface)"			
+			grasp_plugin="$(arg grasp_plugin)"			
+			gripper_active="$(arg gripper_active)"/>
+		</xacro:if>
+
+					
+		<xacro:unless value="$(arg soft_gripper)">
+			<xacro:if value="$(arg robotiq_gripper)">	
+				<xacro:include filename="$(find gripper_description)/urdf/robotiq_gripper.macro.xacro" />
+				<xacro:robotiq_gripper 
+					transmission_hw_interface="$(arg transmission_hw_interface)"			
+					grasp_plugin="$(arg grasp_plugin)"			
+					gripper_active="$(arg gripper_active)"/>
+			</xacro:if>
+			<xacro:unless value="$(arg robotiq_gripper)">		
+				<xacro:include filename="$(find gripper_description)/urdf/gripper.macro.xacro" />
+		 		<xacro:gripper 
+					transmission_hw_interface="$(arg transmission_hw_interface)"			
+					grasp_plugin="$(arg grasp_plugin)"			
+					gripper_active="$(arg gripper_active)"/>
+			</xacro:unless>
+		 </xacro:unless>
+ 
+</robot>

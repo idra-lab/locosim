@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur_robot">
+
+<xacro:include filename="$(find ur_description)/urdf/inc/ur_macro.xacro"/>
+
+<xacro:arg name="robot_name_space" default="ur5"/>
+<xacro:arg name="vision_sensor" default="true"/>
+<xacro:arg name="gazebo" default="true"/>
+<xacro:arg name="gripper" default="false"/>
+<xacro:arg name="soft_gripper" default="false" />
+<xacro:arg name="robotiq_gripper" default="false" />
+
+<xacro:arg name="prefix" default=""/>
+<xacro:arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface"/>
+
+<xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
+<xacro:arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
+<xacro:arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
+<xacro:arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
+<!-- legal values:
+ - hardware_interface/PositionJointInterface
+ - hardware_interface/VelocityJointInterface
+ - hardware_interface/EffortJointInterface
+-->
+<xacro:arg name="safety_limits" default="false"/>
+<xacro:arg name="safety_pos_margin" default="0.15"/>
+<xacro:arg name="safety_k_position" default="20"/>
+
+<xacro:ur_robot
+prefix="$(arg prefix)"
+joint_limits_parameters_file="$(arg joint_limit_params)"
+kinematics_parameters_file="$(arg kinematics_params)"
+physical_parameters_file="$(arg physical_params)"
+visual_parameters_file="$(arg visual_params)"
+transmission_hw_interface="$(arg transmission_hw_interface)"
+safety_limits="$(arg safety_limits)"
+safety_pos_margin="$(arg safety_pos_margin)"
+safety_k_position="$(arg safety_k_position)"/>
+
+     
+<xacro:if value="$(arg soft_gripper)">
+	<xacro:include filename="$(find gripper_description)/urdf/soft_gripper.macro.xacro" />
+	<xacro:soft_gripper 
+	transmission_hw_interface="$(arg transmission_hw_interface)"			
+	grasp_plugin="$(arg gripper)"			
+	gripper_active="$(arg gripper)"/>
+</xacro:if>
+
+<xacro:unless value="$(arg soft_gripper)">
+	<xacro:if value="$(arg robotiq_gripper)">	
+		<xacro:include filename="$(find gripper_description)/urdf/robotiq_gripper.macro.xacro" />
+		<xacro:robotiq_gripper 
+			transmission_hw_interface="$(arg transmission_hw_interface)"			
+			grasp_plugin="false"			
+			gripper_active="$(arg gripper)"/>
+	</xacro:if>
+	<xacro:unless value="$(arg robotiq_gripper)">		
+		<xacro:include filename="$(find gripper_description)/urdf/gripper.macro.xacro" />
+ 		<xacro:gripper 
+			transmission_hw_interface="$(arg transmission_hw_interface)"			
+			grasp_plugin="$(arg gripper)"			
+			gripper_active="$(arg gripper)"/><!--grasp plugin does not work with mimic joints-->		
+	</xacro:unless>
+</xacro:unless>
+
+
+
+<joint name="gripper_robot_joint" type="fixed">
+        <parent link="tool0_without_gripper"/>
+        <child link="gripper_base"/>
+        <origin xyz="0 0 0" rpy="0 0 1.57"/>
+</joint>
+
+<xacro:if value="$(arg vision_sensor)">
+
+	<xacro:if value="$(arg gazebo)">
+		<xacro:include filename="$(find ur_description)/sensors/zed2/simulation/zed2.xacro"/>
+		<xacro:zed2
+			parent="base_link"
+			name="zed_camera1">
+			<origin xyz="-0.9 0.18 -0.35" rpy="0. 0.523 0."/>
+		</xacro:zed2>
+		<xacro:zed2_gazebo/>
+  	</xacro:if>
+		
+<!--	<xacro:include filename="$(find ur_description)/sensors/d435_camera.urdf.xacro"/>-->
+
+<!--	  &lt;!&ndash; realsense &ndash;&gt;-->
+<!--	  &lt;!&ndash;These values are taken from  d435_camera.urdf.xacro and  d435_camera_openni.gazebo.urdf.xacro in sensors-description-->
+<!--	 repo, commit 3fb6f787&ndash;&gt;-->
+<!--	  <xacro:property name="camera_fov" value="3.0"/>-->
+<!--	  <xacro:property name="camera_width" value="640"/> -->
+<!--	  <xacro:property name="camera_height" value="480"/>-->
+<!--	  <xacro:property name="camera_near" value="0.1"/>-->
+<!--	  <xacro:property name="camera_far" value="100"/>    -->
+<!--	  <xacro:property name="m_camera" value="0.07"/> &lt;!&ndash;??&ndash;&gt;-->
+
+<!--	<xacro:d435_camera -->
+<!--		parent="wrist_3_link" -->
+<!--		name="ee_camera"-->
+<!--		camera_plugin="true">  -->
+<!--		<origin xyz="0.05 0.0 -0.02" rpy="0 -1.57 0.0"/>-->
+<!--	</xacro:d435_camera>-->
+
+<!--	  -->
+<!--	  -->
+<!--	  <xacro:property name="camera_fov" value="3.0"/>-->
+<!--	  <xacro:property name="camera_width" value="640"/> -->
+<!--	  <xacro:property name="camera_height" value="480"/>-->
+<!--	  <xacro:property name="camera_near" value="0.01"/>-->
+<!--	  <xacro:property name="camera_far" value="100"/> -->
+
+<!--	<xacro:d435_camera -->
+<!--		parent="base_link" -->
+<!--		name="z_base_camera"-->
+<!--		camera_plugin="true">  -->
+<!--		<origin xyz="0.0 -0.3 -0.5" rpy="0.0  0.5 1.57"/>-->
+<!--	</xacro:d435_camera>-->
+
+
+</xacro:if>
+
+<xacro:if value="$(arg gazebo)">
+  <!--
+    Attach the Gazebo model to Gazebo's world frame.
+
+    Note: if you're looking to integrate a UR into a larger scene and need
+    to add EEFs or other parts, DO NOT change this file or the 'world' link
+    here. Create a NEW xacro instead and decide whether you need to add
+    a 'world' link there.
+  -->
+  <link name="world"/>
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  
+
+    <!-- Configure self collision properties per link -->
+    <gazebo reference="$(arg prefix)shoulder_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)upper_arm_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)forearm_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)wrist_1_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)wrist_3_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)wrist_2_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="$(arg prefix)ee_link">
+      <selfCollide>true</selfCollide>
+    </gazebo>
+	
+
+
+	<!-- fix me https://answers.gazebosim.org//question/15095/gazebo-contact-sensor-added-to-a-robot-link-in-urdf-file-is-not-working-as-expected/-->
+
+
+	<!--gazebo reference="$(arg prefix)wrist_3_link">
+		<kp>1000000.0</kp>
+		<kd>100.0</kd>
+		<mu1>1.0</mu1>
+		<mu2>1.0</mu2>
+		<maxVel>1.0</maxVel>
+		<maxContacts>1</maxContacts>
+		<sensor name="ee_contact_sensor" type="contact">
+			<always_on>true</always_on>
+			<update_rate>250.0</update_rate>
+			<contact>
+				<collision>$(arg prefix)wrist_3_link_collision_collision</collision>
+			</contact>
+		        <plugin name="gazebo_ros_bumper_controller" filename="libgazebo_ros_bumper.so">
+				<bumperTopicName>/ur5/wrench</bumperTopicName>	
+				<frameName>$(arg prefix)wrist_3_link</frameName>		
+		        	<robotNamespace>ur5</robotNamespace>
+			</plugin>
+		</sensor>
+	</gazebo-->
+
+	
+
+
+    <!--
+      Inject Gazebo ROS Control plugin, which allows us to use ros_control
+      controllers to control the virtual robot hw.
+    -->
+    <gazebo>
+      <plugin name="gazebo_ros_controller_manager" filename="libgazebo_ros_control.so">
+			
+			<robotNamespace>$(arg robot_name_space)</robotNamespace> <!--TODO1 change this with prefix when you use 2 robots     -->
+			<robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+			<legacyModeNS>true</legacyModeNS>
+      </plugin>
+    </gazebo>
+
+
+
+
+  </xacro:if>
+</robot>

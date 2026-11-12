@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <world name="default">
+    <physics type='ode'>
+      <gravity>0 0 -9.81</gravity>
+      <max_step_size>0.001</max_step_size> 
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <include>
+      <name>my_box</name>
+      <uri>model://box</uri>
+      <pose> 2. 0. 0.  0. 0. 0.</pose>
+    </include>
+
+    <include>
+      <name>my_cone</name>
+      <uri>model://cone</uri>
+      <pose> 6. 0. 0.  0. 0. 0.</pose>
+    </include>
+
+  </world>
+</sdf>

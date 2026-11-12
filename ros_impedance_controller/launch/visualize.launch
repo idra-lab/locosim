@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<launch>
+     
+     <arg name="rviz_conf" default="$(env LOCOSIM_DIR)/robot_control/rviz/config.rviz"/>
+     <arg name="robot_name" default="ur4"/>
+     <arg name="test_joints" default="true"/>
+
+     <!-- send the robot XML to param server -->
+     <param name="robot_description" command="$(find xacro)/xacro '$(env LOCOSIM_DIR)/robot_urdf/$(arg robot_name).urdf'" />
+     
+    
+    <!-- run rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f base_link"  />
+
+
+	
+     <!-- joint_state_publisher publish joint states from sliders-->
+     <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg test_joints)"/>
+
+
+	
+    <!-- start robot state publisher sends joint state data to gazebo, 	convert joint states to TF transforms for rviz, etc -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen" />
+ 
+  
+
+</launch>

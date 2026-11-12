@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+
+<physics type="ode">
+
+      <ode>
+ 
+        <constraints>
+          <contact_max_correcting_vel>0.1</contact_max_correcting_vel>
+          <contact_surface_layer>0.0001</contact_surface_layer>
+        </constraints>
+      	</ode>
+	<max_contacts>10</max_contacts>
+	</physics>
+
+	<model name="brick">
+
+		<link name="link">
+			
+		   <inertial>
+			<mass>4.0</mass>
+			<inertia> <!-- inertias are tricky to compute -->
+			  <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+			  <ixx>0.083</ixx>       <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+			  <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+			  <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+			  <iyy>0.083</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+			  <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+			  <izz>0.083</izz>       <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+			</inertia>
+		      </inertial>
+		      <collision name="collision">
+			<geometry>
+			  <box>
+			    <size>0.04 0.2 0.05</size>
+			  </box>
+			</geometry>
+		      </collision>
+
+		   
+		      <visual name="visual">
+
+ 			<material>  
+			  <ambient>0.1 0.1 0.1 1</ambient>
+			  <diffuse>0.1 0.1 0.2 1</diffuse>
+			  <specular>0 0 0 0</specular>
+			  <emissive>0 0 0 1</emissive>
+			</material> 
+
+			<geometry>
+			  <box>
+			    <size>0.04 0.2 0.05</size>
+			  </box>
+			</geometry>
+		      </visual>
+
+			<mu1>10</mu1>
+			    <mu2>10</mu2>
+			  
+			    <kp>100000.0</kp>
+			    <kd>10.0</kd> 
+			    <fdir1>0 0 1</fdir1>
+			    <minDepth>0.001</minDepth>
+			    <maxVel>0.0</maxVel>
+			    <maxContacts>2</maxContacts>
+			    <material>Gazebo/RedBright</material>
+
+
+		</link>
+	</model>
+</sdf>
+

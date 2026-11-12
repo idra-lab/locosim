@@ -1,0 +1,5 @@
+<launch>
+
+	<node pkg="tf" type="static_transform_publisher" name="fake_tf1" args="0 0 0 0 0 -0.3 front/camera_depth_optical_frame camera_depth_optical_frame 10"/>
+
+</launch>

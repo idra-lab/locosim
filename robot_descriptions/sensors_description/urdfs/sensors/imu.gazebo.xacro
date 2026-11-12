@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+        <xacro:macro name="imu_sensor" params="frame_name imu_topic namespace update_rate rate_mean rate_stddev
+		rate_bias_mean rate_bias_stddev accel_mean accel_stddev accel_bias_mean accel_bias_stddev">
+                <!-- old plugin -->
+                <!--<gazebo>
+                        <plugin name="${imu_name}_controller" filename="libgazebo_ros_imu.so">
+                                <alwaysOn>true</alwaysOn>
+                                <updateRate>${update_rate}</updateRate>
+                                <bodyName>${imu_name}</bodyName>
+                                <topicName>${imu_topic}</topicName>
+                                <gaussianNoise>${rate_stddev*rate_stddev}</gaussianNoise>
+                                <xyzOffset>0 0 0</xyzOffset>
+                                <rpyOffset>0 0 0</rpyOffset>
+                                <serviceName>${imu_name}</serviceName>
+			</plugin>	
+                </gazebo>-->
+                <!-- Imu definition required for the hardware interface of ros control -->
+                <!--<gazebo reference="${imu_name}">
+                        <sensor name="${imu_name}" type="imu">
+                                <always_on>1</always_on>
+                                <update_rate>${update_rate}</update_rate>
+                                <imu>
+                                        <noise>
+                                                <type>gaussian</type>
+                                                <rate>
+                                                        <mean>${rate_mean}</mean>
+                                                        <stddev>${rate_stddev}</stddev>
+                                                        <bias_mean>${rate_bias_mean}</bias_mean>
+                                                        <bias_stddev>${rate_bias_stddev}</bias_stddev>
+                                                </rate>
+                                                <accel>
+                                                        <mean>${accel_mean}</mean>
+                                                        <stddev>${accel_stddev}</stddev>
+                                                        <bias_mean>${accel_bias_mean}</bias_mean>
+                                                        <bias_stddev>${accel_bias_stddev}</bias_stddev>
+                                                </accel>
+                                        </noise>
+                                </imu>
+                        </sensor>
+                </gazebo>-->
+                <!-- recent plugin with gravity acceleration -->
+
+                <xacro:if value="${namespace == ''}">
+                    <xacro:property name="frame_name_ns" value="${frame_name}"/>
+                </xacro:if>
+                <xacro:if value="${namespace != ''}">
+                    <xacro:property name="frame_name_ns" value="${namespace+'/'+frame_name}"/>
+                </xacro:if>
+
+                <gazebo reference="${frame_name}">
+                   <gravity>true</gravity>
+                   <sensor name="${frame_name}_sensor" type="imu">
+                     <always_on>true</always_on>
+                     <update_rate>${update_rate}</update_rate>
+                     <visualize>true</visualize>
+                     <topic>__default_topic__</topic>
+                     <plugin name="imu_sensor_plugin" filename="libgazebo_ros_imu_sensor.so">
+                       <robotNamespace>${namespace}</robotNamespace>
+                       <topicName>${imu_topic}</topicName>
+                       <bodyName>${frame_name_ns}</bodyName>
+                       <updateRateHZ>${update_rate}</updateRateHZ>
+                       <gaussianNoise>${rate_stddev*rate_stddev}</gaussianNoise>
+                       <xyzOffset>0 0 0</xyzOffset>
+                       <rpyOffset>0 0 0</rpyOffset>
+                       <frameName>${frame_name_ns}</frameName>
+                       <initialOrientationAsReference>false</initialOrientationAsReference>
+                     </plugin>
+                     <pose>0 0 0 0 0 0</pose>
+                   </sensor>
+                 </gazebo>
+
+	</xacro:macro>
+
+</robot>

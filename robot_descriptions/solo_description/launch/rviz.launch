@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<launch>
+
+	<arg name="rviz_conf" default="$(find solo_description)/rviz/conf.rviz"/>
+	<arg name="spawn_x" default="0.0" />
+	<arg name="spawn_y" default="0.0" />
+	<arg name="spawn_z" default="2.0" />
+
+	
+	<!-- send hyq urdf to param server and spawn it -->
+	<include file="$(find solo_description)/launch/upload.launch">	</include>
+
+	<node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args="0 0 0 0 0 0   /base_link /world  200"/>
+
+   	<!-- joint_state_publisher publish joint states from sliders-->
+        <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+
+	<node name="robot_state_publisher" pkg="robot_state_publisher"
+		type="robot_state_publisher" respawn="true">
+		<param name="publish_frequency" value="200" />
+		<param name="rate" value="200" />
+	</node>
+
+	
+	<!-- run rviz -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf) -f world"/>
+
+</launch>
+

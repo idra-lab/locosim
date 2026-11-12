@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+	<xacro:include filename="$(find sensors_description)/urdfs/sensors/imu.gazebo.xacro"/>
+
+
+        <!-- ============================ IMU KVH 1775 ========================
+         The xacro macro xacro:kvh_1775_imu describes the KVH 1775 IMU,
+         together with its frames of reference.
+         The IMU has three axes oriented along the diagonal of the mounting
+         screws at the bottom, as described at page 6 of the technical manual.
+         These axes have three different origins for the sensing points, one
+         per axis. Therefore, we define a common origin which is located at the
+         average of these three. For completeness, we include the three exact
+         axes as well. -->
+
+	<xacro:macro name="kvh_1775_imu" params="parent *origin imu_name imu_topic update_rate">
+                <!-- Joint connecting the mount point of the IMU to the robot -->
+                <joint name="${imu_name}_mount_joint" type="fixed">
+			<xacro:insert_block name="origin"/>
+			<parent link="${parent}" />
+                        <child link="${imu_name}_mount"/>
+		</joint>
+
+                <!-- Fake joint connecting the mount point of the IMU to the
+                     average sensing frame of the IMU -->
+                <joint name="${imu_name}_joint" type="fixed">
+                                        <origin xyz="-0.017066667 -0.013 0.038366667" rpy="0 0 0"/>
+                    <parent link="${imu_name}_mount" />
+                    <child link="${imu_name}"/>
+                </joint>
+
+                <!-- Fake joint connecting the mount point of the IMU to
+                     the sensing point for the x-axis --> 
+                <joint name="${imu_name}_sensing_point_x_joint" type="fixed">
+                    <origin xyz="0 -0.0263 0.0336" rpy="0 0 0"/>
+                    <parent link="${imu_name}_mount" />
+                    <child link="${imu_name}_sensing_point_x"/>
+                </joint>
+
+                <!-- Fake joint connecting the mount point of the IMU to
+                     the sensing point for the x-axis -->
+                <joint name="${imu_name}_sensing_point_y_joint" type="fixed">
+                    <origin xyz="-0.0256 -0.0121 0.0372" rpy="0 0 0"/>
+                    <parent link="${imu_name}_mount" />
+                    <child link="${imu_name}_sensing_point_y"/>
+                </joint>
+                <!-- Fake joint connecting the mount point of the IMU to
+                the sensing point for the x-axis -->
+                <joint name="${imu_name}_sensing_point_z_joint" type="fixed">
+                    <origin xyz="-0.0256 -0.0006 0.0443" rpy="0 0 0"/>
+                    <parent link="${imu_name}_mount" />
+                    <child link="${imu_name}_sensing_point_z"/>
+                </joint>
+
+                <!-- Fake link expressing the average sensing reference frame -->
+                <link name="${imu_name}">
+                    <inertial>
+                        <mass value="0.000" />
+                        <origin xyz="0 0 0" rpy="0 0 0"/>
+                        <inertia ixx="0.00" ixy="0.0" ixz="0.0" iyy="0.00" iyz="0.0" izz="0.00"/>
+                    </inertial>
+                    <visual>
+
+                        <!-- fake visual to let URDF parser happy -->
+                        <geometry>
+                                <sphere radius="0.0005"/>
+                        </geometry>
+                    </visual>
+                </link>
+
+                <!-- Fake link exactly located at the sensing point for the x-axis -->
+                <link name="${imu_name}_sensing_point_x">
+                    <inertial>
+                        <mass value="0.000" />
+                        <origin xyz="0 0 0" rpy="0 0 0"/>
+                        <inertia ixx="0.00" ixy="0.0" ixz="0.0" iyy="0.00" iyz="0.0" izz="0.00"/>
+                    </inertial>
+                    <visual>
+
+                        <!-- fake visual to let URDF parser happy -->
+                        <geometry>
+                                <sphere radius="0.0005"/>
+                        </geometry>
+                    </visual>
+                </link>
+
+                <!-- Fake link expressing the exact sensing point for the y-axis -->
+                <link name="${imu_name}_sensing_point_y">
+                    <inertial>
+                        <mass value="0.000" />
+                        <origin xyz="0 0 0" rpy="0 0 0"/>
+                        <inertia ixx="0.00" ixy="0.0" ixz="0.0" iyy="0.00" iyz="0.0" izz="0.00"/>
+                    </inertial>
+                    <visual>
+
+                        <!-- fake visual to let URDF parser happy -->
+                        <geometry>
+                                <sphere radius="0.0005"/>
+                        </geometry>
+                    </visual>
+                </link>
+
+                <!-- Fake link expressing the exact sensing point for the z-axis -->
+                <link name="${imu_name}_sensing_point_z">
+                    <inertial>
+                        <mass value="0.000" />
+                        <origin xyz="0 0 0" rpy="0 0 0"/>
+                        <inertia ixx="0.00" ixy="0.0" ixz="0.0" iyy="0.00" iyz="0.0" izz="0.00"/>
+                    </inertial>
+                    <visual>
+
+                        <!-- fake visual to let URDF parser happy -->
+                        <geometry>
+                                <sphere radius="0.0005"/>
+                        </geometry>
+                    </visual>
+                </link>
+
+		<!-- Link -->
+                <link name="${imu_name}_mount">
+			<inertial>
+                                <!-- CoM from technical document, rotated by pi/4 -->
+                                <origin xyz="-0.001697056  -0.001414214  0.0328"/>
+                                <mass value="0.69"/>
+                                <!-- izz = 0.5 * 0.69 * (88.9 / 2 / 1000)^2 -->
+                                <!-- ixx = iyy = 1/12*0.69*(3*(88.9/2000)^2+(73.7/1000)^2) -->
+                                <inertia ixx="0.000653148" iyy="0.000653148" izz="0.000681652" ixy="0.0" ixz="0.0" iyz="0.0"/>
+			</inertial>
+			<visual>				
+				<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://sensors_description/meshes/sensors/kvh_1775.dae" scale="1 1 1" />
+				</geometry>
+				<material name="aluminium">
+					<color rgba="0.35 0.35 0.35 1" />
+				</material>
+			</visual>
+		</link>
+
+
+
+		<!-- IMU definition -->
+		<xacro:imu_sensor imu_name="${imu_name}" imu_topic="${imu_topic}"
+		 	update_rate="${update_rate}"
+			rate_mean="${kvh_1775_vel_mean}"
+		 	rate_stddev="${kvh_1775_vel_stddev}"
+		 	rate_bias_mean="${kvh_1775_vel_bias_mean}"
+		 	rate_bias_stddev="${kvh_1775_vel_bias_stddev}"
+		 	accel_mean="${kvh_1775_acc_mean}"
+		 	accel_stddev="${kvh_1775_acc_stddev}"
+			accel_bias_mean="${kvh_1775_acc_bias_mean}"
+		 	accel_bias_stddev="${kvh_1775_acc_bias_stddev}"/>
+		
+	</xacro:macro>
+
+</robot>

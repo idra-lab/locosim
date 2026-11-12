@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch>
+
+	<arg name="soft_gripper" default="false"/>
+	<arg name="robotiq_gripper" default="false"/>
+        <!-- send solo urdf to param server -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find gripper_description)/urdf/gripper.xacro' robotiq_gripper:=$(arg robotiq_gripper)   soft_gripper:=$(arg soft_gripper) gripper_active:=true"/>
+
+
+</launch>
+
+

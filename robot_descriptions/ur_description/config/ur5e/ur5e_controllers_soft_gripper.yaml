@@ -1,0 +1,88 @@
+﻿joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+
+pos_joint_traj_controller:
+  type: position_controllers/JointTrajectoryController
+
+  joints: 
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+    - hand_1_joint
+    - hand_2_joint
+
+  gains:
+    shoulder_pan_joint: {p: 5,  d: 1, i: 1}
+    shoulder_lift_joint: {p: 5, d: 1, i: 1}
+    elbow_joint: {p: 5, d: 1, i: 1}
+    wrist_1_joint: {p: 5, d: 1, i: 1}
+    wrist_2_joint: {p: 5, d: 1, i: 1}
+    wrist_3_joint: {p: 5, d: 1, i: 1}
+    hand_1_joint: {p: 1, d: 0.1, i: 0 }
+    hand_2_joint: {p: 1, d: 0.1, i: 0}
+
+  constraints:
+    goal_time: 0.6
+    stopped_velocity_tolerance: 0.05
+    shoulder_pan_joint: {trajectory: 0.1, goal: 0.1}
+    shoulder_lift_joint: {trajectory: 0.1, goal: 0.1}
+    elbow_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_1_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_2_joint: {trajectory: 0.1, goal: 0.1}
+    wrist_3_joint: {trajectory: 0.1, goal: 0.1}
+    hand_1_joint: {trajectory: 0.1, goal: 0.1}
+    hand_2_joint: {trajectory: 0.1, goal: 0.1}
+    hand_3_joint: {trajectory: 0.1, goal: 0.1}
+  stop_trajectory_duration: 0.5
+  state_publish_rate: 1000
+  action_monitor_rate: 10
+
+joint_group_pos_controller:
+    type: position_controllers/JointGroupPositionController
+    joints: 
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+      - hand_1_joint
+      - hand_2_joint
+ 
+    gains:
+      shoulder_pan_joint: {p: 5, i: 1, d: 1}
+      shoulder_lift_joint: {p: 5, i: 1, d: 1}
+      elbow_joint: {p: 5, i: 1, d: 1}
+      wrist_1_joint: {p: 5, i: 1, d: 1}
+      wrist_2_joint: {p: 5, i: 1, d: 1}
+      wrist_3_joint: {p: 5, i: 1, d: 1}
+      hand_1_joint: {p: 5, i: 1, d: 1}
+      hand_2_joint: {p: 5, i: 1, d: 1}
+
+
+joint_group_vel_controller:
+    type: velocity_controllers/JointGroupVelocityController
+    joints: 
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+      - hand_1_joint
+      - hand_2_joint
+  
+    gains:
+      shoulder_pan_joint: {p: 5, i: 1, d: 1}
+      shoulder_lift_joint: {p: 5, i: 1, d: 1}
+      elbow_joint: {p: 5, i: 1, d: 1}
+      wrist_1_joint: {p: 5, i: 1, d: 1}
+      wrist_2_joint: {p: 5, i: 1, d: 1}
+      wrist_3_joint: {p: 5, i: 1, d: 1}
+      hand_1_joint: {p: 5, i: 1, d: 1}
+      hand_2_joint: {p: 5, i: 1, d: 1}
+
