@@ -140,11 +140,14 @@ for p in paths:
 PY
 
 # Source ROS automatically  use single quote to have it literal and avoid expansion of empty $PYTHONPATH
+#ROS_IP avoids multicast error if no network is present
 RUN echo '#!/bin/bash' >> /etc/bash.bashrc && \
     echo 'source /opt/ros/noetic/setup.bash' >> /etc/bash.bashrc && \
     echo '[ -f /root/ros_ws/install/setup.bash ] && source /root/ros_ws/install/setup.bash' >> /etc/bash.bashrc && \
     echo 'export LOCOSIM_DIR=/root/ros_ws/src/locosim' >> /etc/bash.bashrc && \
     echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> /etc/bash.bashrc && \
+    echo 'export GAZEBO_SUPPRESS_EOL_WARNING=1' >> /etc/bash.bashrc && \
+    echo 'export ROS_IP=127.0.0.1' >> /etc/bash.bashrc && \  
     echo 'export PYTHONPATH=/opt/ros/noetic/lib/python3.8/site-packages:$LOCOSIM_DIR/robot_control:$PYTHONPATH' >> /etc/bash.bashrc && \
     echo 'alias pycharm='\''/root/pycharm/bin/pycharm.sh'\''' >> /etc/bash.bashrc
 RUN chmod +x /etc/bash.bashrc
