@@ -254,8 +254,8 @@ def talker(p):
     # loop frequency
     rate = ros.Rate(1 / conf.robot_params[p.robot_name]['dt'])
 
-    p.q_des_q0 = conf.robot_params[p.robot_name]['q_0']
-    p.q_des = np.copy(p.q_des_q0)
+    # p.q_des_q0 = conf.robot_params[p.robot_name]['q_0']
+    # p.q_des = np.copy(p.q_des_q0)
 
     # homing procedure
     if p.homing_flag:
@@ -276,14 +276,14 @@ def talker(p):
     #reduce sim speed, real time factor
     #p.setSimSpeed(dt_sim=0.001, max_update_rate=300)
 
-    #change run-time PID joints
+    #EXE 2: change run-time PID joints
     #p.pid.setPDjoint(0, 10, 0, 0)
 
     #control loop (runs every dt seconds)
     while not ros.is_shutdown():
         p.updateKinematicsDynamics()
 
-        ## set joints here
+        #EXE1: set reference for joints
         # p.q_des = p.q_des_q0  + 0.1 * np.sin(2*np.pi*0.5*p.time)
         # p.qd_des = 0.1 * 2 * np.pi * 0.5* np.cos(2 * np.pi * 0.5 * p.time)*np.ones(p.robot.na)
 

@@ -30,7 +30,7 @@ def talker(p):
     time = 0
     q_des0 = np.array([ -0.32,-0.78, -2.56,-1.63, -1.57, 3.49])
 
-    # 1 fixed setpoint
+    #EXE 1 fixed setpoint
     p.q_des = q_des0
 
     # check if gripper is actuated
@@ -43,18 +43,11 @@ def talker(p):
         if p.gripper_sim == True:
             print("this publisher cannot handle the gripper joints")
             break
-        # 2 - generate step reference
-<<<<<<< HEAD:lab_exercises/lab_palopoli/custom_joint_publisher.py
-        if time < 4.:
-            p.q_des = q_des0
-        else:
-            p.q_des = q_des0 + np.array([0., 0.4, 0., 0., 0., 0])
-=======
+        #EXE 2 - generate step reference
         # if time < 4.:
         #     p.q_des = q_des0
         # else:
             #p.q_des = q_des0 + np.array([0., 0.4, 0., 0., 0., 0])
->>>>>>> 05fc729 (renaming exercise folders):fdr_exercises/custom_joint_publisher.py
 
 
         p.qd_des = np.zeros(6)

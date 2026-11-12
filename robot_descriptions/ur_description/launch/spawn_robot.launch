@@ -3,9 +3,9 @@
         <arg name="robot_name" default="ur5" />
         <arg name="gui" default="true" />
         <arg name="rviz_conf" default="$(find ur_description)/rviz/single_robot.rviz"/>
-	<arg name="spawn_x" default="0.0" />
-	<arg name="spawn_y" default="0.0" />
-	<arg name="spawn_z" default="1.8" />
+        <arg name="spawn_x" default="0.0" />
+        <arg name="spawn_y" default="0.0" />
+        <arg name="spawn_z" default="1.8" />
 
         <!-- load robot name into param server-->
         <param name="robot_name" type="str" value="$(arg robot_name)" />
