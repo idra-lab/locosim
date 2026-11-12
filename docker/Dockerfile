@@ -6,7 +6,8 @@ FROM osrf/ros:noetic-desktop-full
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=Etc/UTC \
     LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    CMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # -----------------------------
 # Base system dependencies
@@ -94,6 +95,13 @@ RUN pip3 install --no-cache-dir numpy scipy wheel
 
 # then install cvxpy and the other packages
 RUN pip3 install --no-cache-dir cvxpy==1.2.0 shapely quadprog
+
+# Some pip packages pull in the "cmake" wheel (CMake 4.x) into /usr/local/bin,
+# which shadows the system CMake 3.16 and breaks catkin
+# ("Compatibility with CMake < 3.5 has been removed"). Remove it and check
+# that the system cmake is the one used.
+RUN pip3 uninstall -y cmake || true && \
+    hash -r && cmake --version && test "$(command -v cmake)" = /usr/bin/cmake
 
 # -----------------------------
 # robotpkg (Focal → py38)
